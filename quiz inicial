@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz Fantasma 👻</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #000;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .box {
+      max-width: 400px;
+      width: 90%;
+      background: #111;
+      border: 2px solid #900;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 0 20px #400;
+    }
+    h1 {
+      color: #ff2a2a;
+    }
+    button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 12px;
+      background: #222;
+      color: #fff;
+      border: 1px solid #900;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #900;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="box" id="quiz">
+  <h1>Quiz Fantasma 👻</h1>
+  <p id="pergunta">Quem é o vilão do filme Halloween?</p>
+
+  <button onclick="responder(false)">Freddy Krueger</button>
+  <button onclick="responder(true)">Michael Myers</button>
+  <button onclick="responder(false)">Jason Voorhees</button>
+</div>
+
+<script>
+  function responder(correta) {
+    if (correta) {
+      alert("🎃 Resposta correta!");
+    } else {
+      alert("💀 Errou! O Ceifador está observando...");
+    }
+  }
+</script>
+
+</body>
+</html>

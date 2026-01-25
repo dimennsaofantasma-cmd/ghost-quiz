@@ -66,15 +66,21 @@ const somErro   = new Audio("https://actions.google.com/sounds/v1/cartoon/boing.
 const banco = {
   terror: [
     { q:"Quem é o vilão de Halloween?", o:["Freddy","Jason","Michael Myers","Chucky"], c:2 },
-    { q:"Qual filme tem o boneco Annabelle?", o:["Invocação do Mal","It","A Bruxa","O Chamado"], c:0 }
+    { q:"Qual filme tem o boneco Annabelle?", o:["Invocação do Mal","It","A Bruxa","O Chamado"], c:0 },
+    { q:"Qual vilão usa uma máscara de hóquei?", o:["Freddy","Jason","Michael","Leatherface"], c:1 },
+    { q:"Em qual filme aparece o Hotel Overlook?", o:["Psicose","O Iluminado","O Exorcista","A Bruxa"], c:1 }
   ],
   invocacao: [
     { q:"Annabelle pertence a qual universo?", o:["Jogos Mortais","Invocação do Mal","Halloween","It"], c:1 },
-    { q:"Qual entidade aparece em A Entidade?", o:["Bagul","Pazuzu","Valak","Annabelle"], c:0 }
+    { q:"Qual entidade aparece em A Entidade?", o:["Bagul","Pazuzu","Valak","Annabelle"], c:0 },
+    { q:"Quem é a freira demoníaca?", o:["Bagul","Valak","Pazuzu","Malthus"], c:1 },
+    { q:"O casal Warren é conhecido por quê?", o:["Exorcismos","Caçar vampiros","Investigar OVNIs","Criar lendas"], c:0 }
   ],
   lendas: [
     { q:"Qual lenda aparece em banheiros escolares?", o:["Mula-sem-cabeça","Loira do Banheiro","Cuca","Boto"], c:1 },
-    { q:"Qual lenda protege a floresta?", o:["Saci","Curupira","Boitatá","Iara"], c:1 }
+    { q:"Qual lenda protege a floresta?", o:["Saci","Curupira","Boitatá","Iara"], c:1 },
+    { q:"Quem vive nos rios e seduz pessoas?", o:["Iara","Cuca","Mula","Loira"], c:0 },
+    { q:"Qual lenda tem os pés virados para trás?", o:["Boitatá","Curupira","Saci","Boto"], c:1 }
   ]
 };
 
@@ -84,7 +90,7 @@ let pontos = 0;
 let tempo = 10;
 let intervalo;
 
-/* ===== TELAS ===== */
+/* TELAS */
 function telaInicial(){
   app.innerHTML = `
     <h1>Ghost Quiz 👻</h1>
@@ -110,7 +116,7 @@ function telaTemas(){
   `;
 }
 
-/* ===== QUIZ ===== */
+/* QUIZ */
 function selecionarTema(tema){
   perguntas = banco[tema];
   atual = 0;

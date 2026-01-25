@@ -1,73 +1,80 @@
 <script>
 const app = document.getElementById("app");
 
-/* ===== ÁUDIO ÚNICO (truque anti-bloqueio) ===== */
+/* ===== ÁUDIO ÚNICO ===== */
 const audio = new Audio();
-audio.preload = "auto";
-
-/* desbloqueio obrigatório */
 document.addEventListener("click", () => {
   audio.src = "https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg";
-  audio.play().then(()=>{
-    audio.pause();
-    audio.currentTime = 0;
-  }).catch(()=>{});
-},{ once:true });
+  audio.play().then(()=>{audio.pause();audio.currentTime=0;}).catch(()=>{});
+},{once:true});
 
-function playCorrect(){
-  audio.src = "https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg";
+function somAcerto(){
+  audio.src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg";
   audio.play().catch(()=>{});
 }
-function playWrong(){
-  audio.src = "https://actions.google.com/sounds/v1/cartoon/boing.ogg";
-  audio.play().catch(()=>{});
-}
-function playTime(){
-  audio.src = "https://actions.google.com/sounds/v1/alarms/beep_short.ogg";
+function somErro(){
+  audio.src="https://actions.google.com/sounds/v1/cartoon/boing.ogg";
   audio.play().catch(()=>{});
 }
 
-/* ===== PERGUNTAS ===== */
-const banco = {
-  terror:[
-    { q:"Quem é o vilão de Halloween?", o:["Freddy Krueger","Jason Voorhees","Michael Myers","Chucky"], c:2 }
-  ],
-  invocacao:[
-    { q:"Qual filme faz parte do universo Invocação do Mal?", o:["Jogos Mortais","Annabelle","O Iluminado","A Bruxa"], c:1 }
-  ],
-  lendas:[
-    { q:"Qual é uma lenda urbana famosa?", o:["Loira do Banheiro","Alienígena","Drácula","Kraken"], c:0 }
-  ]
+/* ===== BANCO ===== */
+const banco={
+  terror:[{q:"Quem é o vilão de Halloween?",o:["Freddy","Jason","Michael Myers","Chucky"],c:2}],
+  invocacao:[{q:"Qual faz parte do universo Invocação?",o:["Jogos Mortais","Annabelle","It","A Bruxa"],c:1}],
+  lendas:[{q:"Lenda urbana famosa?",o:["Loira do Banheiro","Alien","Drácula","Kraken"],c:0}]
 };
 
 let perguntas=[], atual=0, pontos=0, tempo=15, intervalo=null;
+
+/* ===== RANKING ===== */
+function salvarRanking(nome,pontos){
+  let ranking = JSON.parse(localStorage.getItem("ghostRanking")) || [];
+  ranking.push({nome,pontos});
+  ranking.sort((a,b)=>b.pontos-a.pontos);
+  ranking = ranking.slice(0,10);
+  localStorage.setItem("ghostRanking",JSON.stringify(ranking));
+}
+function telaRanking(){
+  let ranking = JSON.parse(localStorage.getItem("ghostRanking")) || [];
+  app.innerHTML=`
+    <h2>🏆 Ranking Fantasma</h2>
+    <ol>
+      ${ranking.map(r=>`<li>${r.nome} — ${r.pontos} pts</li>`).join("")}
+    </ol>
+    <button onclick="telaInicial()">Voltar</button>
+  `;
+}
 
 /* ===== TELAS ===== */
 function telaInicial(){
   app.innerHTML=`
     <h1>Ghost Quiz 👻</h1>
-    <p>Você ousa entrar nesta dimensão?<br>Responda ao quiz… ou perca sua alma.</p>
+    <p>Você ousa entrar nesta dimensão?</p>
+    <input id="nome" placeholder="Seu nome (opcional)">
     <button onclick="telaTempo()">Iniciar Quiz</button>
+    <button onclick="telaRanking()">Ver Ranking</button>
   `;
 }
 function telaTempo(){
   app.innerHTML=`
     <h2>Escolha o tempo</h2>
-    <button onclick="definirTempo(15)">15 segundos</button>
-    <button onclick="definirTempo(30)">30 segundos</button>
+    <button onclick="definirTempo(15)">15s</button>
+    <button onclick="definirTempo(30)">30s</button>
   `;
 }
-function definirTempo(t){ tempo=t; telaTema(); }
+function definirTempo(t){tempo=t;telaTema();}
 function telaTema(){
   app.innerHTML=`
-    <h2>Escolha o tema…</h2>
-    <button onclick="selecionarTema('terror')">🔪 Terror Clássico</button>
-    <button onclick="selecionarTema('invocacao')">📖 Invocação do Mal</button>
-    <button onclick="selecionarTema('lendas')">🌫️ Lendas Urbanas</button>
+    <h2>Escolha o tema</h2>
+    <button onclick="selecionarTema('terror')">🔪 Terror</button>
+    <button onclick="selecionarTema('invocacao')">📖 Invocação</button>
+    <button onclick="selecionarTema('lendas')">🌫️ Lendas</button>
   `;
 }
 function selecionarTema(t){
-  perguntas=banco[t]; atual=0; pontos=0; carregar();
+  perguntas=banco[t];
+  atual=0; pontos=0;
+  carregar();
 }
 
 /* ===== QUIZ ===== */
@@ -78,38 +85,42 @@ function carregar(){
     <h3>${perguntas[atual].q}</h3>
     <p id="timer">⏱ ${rest}s</p>
     ${perguntas[atual].o.map((op,i)=>`<button onclick="responder(${i})">${op}</button>`).join("")}
-    <p id="feedback"></p>
+    <p id="fb"></p>
   `;
   intervalo=setInterval(()=>{
     rest--;
     document.getElementById("timer").innerText="⏱ "+rest+"s";
     if(rest<=0){
       clearInterval(intervalo);
-      playTime();
-      document.getElementById("feedback").innerText="⏰ Tempo esgotado!";
+      somErro();
+      document.getElementById("fb").innerText="Tempo esgotado!";
       setTimeout(proxima,800);
     }
   },1000);
 }
-
 function responder(i){
   clearInterval(intervalo);
   if(i===perguntas[atual].c){
-    pontos++; playCorrect();
-    document.getElementById("feedback").innerText="✔ Correto!";
+    pontos++; somAcerto();
+    document.getElementById("fb").innerText="Correto!";
   }else{
-    playWrong();
-    document.getElementById("feedback").innerText="✖ Errado!";
+    somErro();
+    document.getElementById("fb").innerText="Errado!";
   }
   setTimeout(proxima,800);
 }
-
-function proxima(){ atual++; atual<perguntas.length?carregar():fim(); }
+function proxima(){
+  atual++;
+  atual<perguntas.length?carregar():fim();
+}
 function fim(){
+  const nome=document.getElementById("nome")?.value || "Anônimo";
+  salvarRanking(nome,pontos);
   app.innerHTML=`
     <h2>Sua alma foi julgada…</h2>
-    <p>Pontuação final: <b>${pontos}</b></p>
-    <button onclick="telaInicial()">Tentar novamente</button>
+    <p>Pontuação: <b>${pontos}</b></p>
+    <button onclick="telaRanking()">Ver Ranking</button>
+    <button onclick="telaInicial()">Jogar novamente</button>
   `;
 }
 

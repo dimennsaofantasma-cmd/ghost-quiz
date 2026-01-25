@@ -11,14 +11,14 @@ body{
   font-family:Arial, sans-serif;
   background:#0b0b0b;
   color:#eee;
-  text-align:center;
 }
 #app{
   max-width:600px;
-  margin:40px auto;
+  margin:30px auto;
   padding:20px;
   background:#111;
   border-radius:12px;
+  text-align:center;
 }
 button{
   display:block;
@@ -46,11 +46,14 @@ input{
 <div id="app"></div>
 
 <script>
-/* ===== ÁUDIO ===== */
+/* ===== ÁUDIO (1 SOM - ESTÁVEL MOBILE) ===== */
 const audio = new Audio();
 document.addEventListener("click",()=>{
   audio.src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg";
-  audio.play().then(()=>{audio.pause();audio.currentTime=0;}).catch(()=>{});
+  audio.play().then(()=>{
+    audio.pause();
+    audio.currentTime=0;
+  }).catch(()=>{});
 },{once:true});
 
 function somAcerto(){
@@ -62,122 +65,130 @@ function somErro(){
   audio.play().catch(()=>{});
 }
 
-/* ===== BANCO ===== */
-const banco={
-  terror:[{q:"Quem é o vilão de Halloween?",o:["Freddy","Jason","Michael Myers","Chucky"],c:2}],
-  invocacao:[{q:"Qual filme faz parte do universo Invocação?",o:["Jogos Mortais","Annabelle","It","A Bruxa"],c:1}],
-  lendas:[{q:"Lenda urbana famosa?",o:["Loira do Banheiro","Alien","Drácula","Kraken"],c:0}]
+/* ===== BANCO DE PERGUNTAS ===== */
+const banco = {
+  terror: [
+    {
+      q: "Quem é o vilão do filme Halloween?",
+      o: ["Freddy Krueger","Jason Voorhees","Michael Myers","Chucky"],
+      c: 2
+    }
+  ],
+  lendas: [
+    {
+      q: "Qual lenda urbana é famosa em escolas?",
+      o: ["Loira do Banheiro","Kraken","Drácula","Múmia"],
+      c: 0
+    }
+  ]
 };
 
-let perguntas=[], atual=0, pontos=0, tempo=15, intervalo=null;
-
-/* ===== RANKING ===== */
-function salvarRanking(nome,pontos){
-  let r=JSON.parse(localStorage.getItem("ghostRanking"))||[];
-  r.push({nome,pontos});
-  r.sort((a,b)=>b.pontos-a.pontos);
-  localStorage.setItem("ghostRanking",JSON.stringify(r.slice(0,10)));
-}
-function telaRanking(){
-  let r=JSON.parse(localStorage.getItem("ghostRanking"))||[];
-  app.innerHTML=`
-    <h2>🏆 Ranking Fantasma</h2>
-    <ol>${r.map(i=>`<li>${i.nome} — ${i.pontos} pts</li>`).join("")}</ol>
-    <button onclick="telaInicial()">Voltar</button>
-  `;
-}
+let perguntas = [];
+let atual = 0;
+let pontos = 0;
+let tempo = 15;
+let intervalo = null;
 
 /* ===== TELAS ===== */
-const app=document.getElementById("app");
+const app = document.getElementById("app");
 
 function telaInicial(){
-  app.innerHTML=`
+  app.innerHTML = `
     <h1>Ghost Quiz 👻</h1>
     <p>Você ousa entrar nesta dimensão?</p>
-    <input id="nome" placeholder="Seu nome (opcional)">
     <button onclick="telaTempo()">Iniciar Quiz</button>
-    <button onclick="telaRanking()">Ver Ranking</button>
   `;
 }
 
 function telaTempo(){
-  app.innerHTML=`
+  app.innerHTML = `
     <h2>Escolha o tempo</h2>
-    <button onclick="definirTempo(15)">15s</button>
-    <button onclick="definirTempo(30)">30s</button>
+    <button onclick="definirTempo(15)">15 segundos</button>
+    <button onclick="definirTempo(30)">30 segundos</button>
   `;
 }
 
-function definirTempo(t){tempo=t;telaTema();}
+function definirTempo(t){
+  tempo = t;
+  telaTema();
+}
 
 function telaTema(){
-  app.innerHTML=`
+  app.innerHTML = `
     <h2>Escolha o tema</h2>
     <button onclick="selecionarTema('terror')">🔪 Terror</button>
-    <button onclick="selecionarTema('invocacao')">📖 Invocação</button>
-    <button onclick="selecionarTema('lendas')">🌫️ Lendas</button>
+    <button onclick="selecionarTema('lendas')">🌫️ Lendas Urbanas</button>
   `;
 }
 
 function selecionarTema(t){
-  perguntas=banco[t];
-  atual=0; pontos=0;
-  carregar();
+  perguntas = banco[t];
+  atual = 0;
+  pontos = 0;
+  carregarPergunta();
 }
 
 /* ===== QUIZ ===== */
-function carregar(){
+function carregarPergunta(){
   clearInterval(intervalo);
-  let rest=tempo;
-  app.innerHTML=`
+  let restante = tempo;
+
+  app.innerHTML = `
     <h3>${perguntas[atual].q}</h3>
-    <p id="timer">⏱ ${rest}s</p>
-    ${perguntas[atual].o.map((op,i)=>`<button onclick="responder(${i})">${op}</button>`).join("")}
-    <p id="fb"></p>
+    <p id="timer">⏱ ${restante}s</p>
+    ${perguntas[atual].o.map((op,i)=>
+      `<button onclick="responder(${i})">${op}</button>`
+    ).join("")}
+    <p id="feedback"></p>
   `;
-  intervalo=setInterval(()=>{
-    rest--;
-    document.getElementById("timer").innerText="⏱ "+rest+"s";
-    if(rest<=0){
+
+  intervalo = setInterval(()=>{
+    restante--;
+    document.getElementById("timer").innerText = "⏱ " + restante + "s";
+
+    if(restante <= 0){
       clearInterval(intervalo);
       somErro();
-      document.getElementById("fb").innerText="Tempo esgotado!";
-      setTimeout(proxima,800);
+      document.getElementById("feedback").innerText = "⏰ Tempo esgotado!";
+      setTimeout(proximaPergunta, 800);
     }
   },1000);
 }
 
 function responder(i){
   clearInterval(intervalo);
-  if(i===perguntas[atual].c){
-    pontos++; somAcerto();
-    document.getElementById("fb").innerText="Correto!";
+
+  if(i === perguntas[atual].c){
+    pontos++;
+    somAcerto();
+    document.getElementById("feedback").innerText = "✔ Correto!";
   }else{
     somErro();
-    document.getElementById("fb").innerText="Errado!";
+    document.getElementById("feedback").innerText = "✖ Errado!";
   }
-  setTimeout(proxima,800);
+
+  setTimeout(proximaPergunta, 800);
 }
 
-function proxima(){
+function proximaPergunta(){
   atual++;
-  if (atual >= perguntas.length) {
-    fim();
-  } else {
-    carregar();
+  if(atual >= perguntas.length){
+    fimQuiz();
+  }else{
+    carregarPergunta();
   }
+}
 
-function fim(){
-  const nome=document.getElementById("nome").value||"Anônimo";
-  salvarRanking(nome,pontos);
-  app.innerHTML=`
-    <h2>Sua alma foi julgada…</h2>
-    <p>Pontuação: <b>${pontos}</b></p>
-    <button onclick="telaRanking()">Ver Ranking</button>
+/* ===== FINAL ===== */
+function fimQuiz(){
+  app.innerHTML = `
+    <h2>Sua alma foi julgada… 👻</h2>
+    <p>Pontuação final: <b>${pontos}</b></p>
     <button onclick="telaInicial()">Jogar novamente</button>
   `;
 }
 
+/* START */
 telaInicial();
 </script>
 

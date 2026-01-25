@@ -79,6 +79,7 @@ const banco = {
 
 let perguntas=[], atual=0, pontos=0;
 let tempoPadrao=15, tempo=15, intervalo=null;
+let nomeJogador = "Anônimo";
 const app=document.getElementById("app");
 
 /* ===== RANKING (localStorage) ===== */
@@ -110,12 +111,19 @@ function telaInicial(){
 }
 
 function telaTempo(){
+  function telaTempo(){
+  const n = document.getElementById("nome");
+  if(n && n.value.trim() !== ""){
+    nomeJogador = n.value.trim();
+  }
+
   app.innerHTML=`
     <h1>Escolha o tempo</h1>
     <button onclick="definirTempo(15)">15 segundos</button>
     <button onclick="definirTempo(20)">20 segundos</button>
     <button onclick="definirTempo(30)">30 segundos</button>
   `;
+}
 }
 
 function definirTempo(t){
@@ -185,8 +193,8 @@ function proxima(){
 }
 
 function fim(){
-  const nome = document.getElementById("nome")?.value?.trim() || "Anônimo";
-  salvarRanking(nome, pontos);
+  const nome =
+salvarRanking(nomeJogador, pontos);
   app.innerHTML=`
     <h1>Sua alma foi julgada 👻</h1>
     <p>Pontuação: <b>${pontos}</b></p>

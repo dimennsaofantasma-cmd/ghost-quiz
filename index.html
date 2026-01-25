@@ -1,210 +1,174 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ghost Quiz 👻</title>
+  <meta charset="UTF-8">
+  <title>Ghost Quiz 👻</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-body{
-  margin:0;
-  background:#000;
-  color:#fff;
-  font-family:Arial, sans-serif;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
-}
-.box{
-  width:90%;
-  max-width:420px;
-  background:#111;
-  border:2px solid #900;
-  border-radius:12px;
-  padding:20px;
-  box-shadow:0 0 20px #400;
-  text-align:center;
-}
-h1{color:#ff2a2a;}
-button{
-  width:100%;
-  padding:12px;
-  margin:8px 0;
-  background:#222;
-  color:#fff;
-  border:1px solid #900;
-  border-radius:8px;
-  font-size:16px;
-}
-button:hover{background:#900;}
-input{
-  width:100%;
-  padding:10px;
-  margin:8px 0;
-  border-radius:6px;
-  border:none;
-}
-#timerBar{
-  height:10px;
-  background:#900;
-  border-radius:5px;
-  margin-bottom:10px;
-}
-ol{padding-left:18px;text-align:left}
-</style>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #000;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    #app {
+      width: 95%;
+      max-width: 420px;
+      background: #111;
+      border: 2px solid #900;
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 0 20px #400;
+      text-align: center;
+    }
+
+    h1 {
+      color: #f33;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 12px;
+      background: #222;
+      color: #fff;
+      border: 1px solid #900;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background: #400;
+    }
+
+    .bar {
+      height: 10px;
+      background: #400;
+      margin: 10px 0;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .fill {
+      height: 100%;
+      background: #f33;
+      width: 100%;
+      transition: width 1s linear;
+    }
+  </style>
 </head>
 
 <body>
-<div class="box" id="app"></div>
+  <div id="app"></div>
 
-<script>
-/* ===== SONS ===== */
-const somAcerto = new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg");
-const somErro   = new Audio("https://actions.google.com/sounds/v1/cartoon/boing.ogg");
+  <script>
+    const app = document.getElementById("app");
 
-/* ===== BANCO DE PERGUNTAS ===== */
-const banco = {
-  terror: [
-    { q:"Quem é o vilão de Halloween?", o:["Freddy Krueger","Jason Voorhees","Michael Myers","Chucky"], c:2 },
-    { q:"Quem usa máscara de hóquei?", o:["Jason","Freddy","Chucky","Pennywise"], c:0 }
-  ],
-  invocacao: [
-    { q:"Qual faz parte do Invocação do Mal?", o:["Jogos Mortais","Annabelle","O Iluminado","A Bruxa"], c:1 }
-  ],
-  lendas: [
-    { q:"Qual lenda urbana famosa no Brasil?", o:["Kraken","Loira do Banheiro","Drácula","Múmia"], c:1 }
-  ]
-};
+    const banco = {
+      terror: [
+        {
+          q: "Quem é o vilão do filme Halloween?",
+          o: ["Freddy Krueger", "Jason Voorhees", "Michael Myers", "Chucky"],
+          c: 2
+        }
+      ],
+      lendas: [
+        {
+          q: "Qual lenda urbana é famosa em escolas?",
+          o: ["Loira do Banheiro", "Kraken", "Drácula", "Múmia"],
+          c: 0
+        }
+      ]
+    };
 
-let perguntas=[], atual=0, pontos=0;
-let tempoPadrao=15, tempo=15, intervalo=null;
-let nomeJogador = "Anônimo";
-const app=document.getElementById("app");
+    let perguntas = [];
+    let atual = 0;
+    let pontos = 0;
+    let tempoMax = 15;
+    let tempo = tempoMax;
+    let intervalo = null;
 
-/* ===== RANKING (localStorage) ===== */
-function salvarRanking(nome, pontos){
-  const key = "ghostRanking";
-  const lista = JSON.parse(localStorage.getItem(key) || "[]");
-  lista.push({ nome, pontos });
-  lista.sort((a,b)=>b.pontos-a.pontos);
-  localStorage.setItem(key, JSON.stringify(lista.slice(0,10)));
-}
-function telaRanking(){
-  const lista = JSON.parse(localStorage.getItem("ghostRanking") || "[]");
-  app.innerHTML = `
-    <h1>🏆 Ranking Fantasma</h1>
-    ${lista.length ? `<ol>${lista.map(i=>`<li>${i.nome} — ${i.pontos} pts</li>`).join("")}</ol>` : "<p>Sem registros ainda.</p>"}
-    <button onclick="telaInicial()">Voltar</button>
-  `;
-}
+    function telaInicial() {
+      app.innerHTML = `
+        <h1>Ghost Quiz 👻</h1>
+        <p>Você ousa entrar nesta dimensão?<br>Responda ao quiz… ou perca sua alma.</p>
+        <button onclick="telaTemas()">Iniciar Quiz</button>
+      `;
+    }
 
-/* ===== TELAS ===== */
-function telaInicial(){
-  app.innerHTML=`
-    <h1>Ghost Quiz 👻</h1>
-    <p>Você ousa entrar nesta dimensão?</p>
-    <input id="nome" placeholder="Seu nome (opcional)">
-    <button onclick="telaTempo()">Iniciar Quiz</button>
-    <button onclick="telaRanking()">Ver Ranking</button>
-  `;
-}
+    function telaTemas() {
+      app.innerHTML = `
+        <h2>Escolha o tema</h2>
+        <button onclick="iniciar('terror')">🔪 Terror Clássico</button>
+        <button onclick="iniciar('lendas')">🌫️ Lendas Urbanas</button>
+      `;
+    }
 
-function telaTempo(){
-  function telaTempo(){
-  const n = document.getElementById("nome");
-  if(n && n.value.trim() !== ""){
-    nomeJogador = n.value.trim();
-  }
+    function iniciar(tema) {
+      perguntas = banco[tema];
+      atual = 0;
+      pontos = 0;
+      tempo = tempoMax;
+      carregar();
+    }
 
-  app.innerHTML=`
-    <h1>Escolha o tempo</h1>
-    <button onclick="definirTempo(15)">15 segundos</button>
-    <button onclick="definirTempo(20)">20 segundos</button>
-    <button onclick="definirTempo(30)">30 segundos</button>
-  `;
-}
-}
+    function carregar() {
+      const p = perguntas[atual];
+      app.innerHTML = `
+        <div class="bar"><div class="fill" id="fill"></div></div>
+        <p><b>${p.q}</b></p>
+        ${p.o.map((op, i) =>
+          `<button onclick="responder(${i})">${op}</button>`
+        ).join("")}
+      `;
+      iniciarTempo();
+    }
 
-function definirTempo(t){
-  tempoPadrao=t;
-  telaTemas();
-}
-
-function telaTemas(){
-  app.innerHTML=`
-    <h1>Escolha o tema</h1>
-    <button onclick="selecionarTema('terror')">🔪 Terror Clássico</button>
-    <button onclick="selecionarTema('invocacao')">📖 Invocação do Mal</button>
-    <button onclick="selecionarTema('lendas')">🌫️ Lendas Urbanas</button>
-  `;
-}
-
-function selecionarTema(t){
-  perguntas=[...banco[t]];
-  atual=0;
-  pontos=0;
-  carregar();
-}
-
-/* ===== QUIZ ===== */
-function carregar(){
-  tempo=tempoPadrao;
-  app.innerHTML=`
-    <div id="timerBar"></div>
-    <p>⏱️ <span id="tempo">${tempo}</span>s</p>
-    <p><b>${perguntas[atual].q}</b></p>
-    ${perguntas[atual].o.map((op,i)=>`<button onclick="responder(${i})">${op}</button>`).join("")}
-    <p id="fb"></p>
-  `;
-  iniciarTempo();
-}
-
-function iniciarTempo(){
-  clearInterval(intervalo);
-  intervalo=setInterval(()=>{
-    tempo--;
-    document.getElementById("tempo").innerText=tempo;
-    document.getElementById("timerBar").style.width=(tempo/tempoPadrao*100)+"%";
-    if(tempo<=0){
+    function iniciarTempo() {
       clearInterval(intervalo);
-      somErro.play().catch(()=>{});
+      tempo = tempoMax;
+      atualizarBarra();
+      intervalo = setInterval(() => {
+        tempo--;
+        atualizarBarra();
+        if (tempo <= 0) {
+          clearInterval(intervalo);
+          proxima();
+        }
+      }, 1000);
+    }
+
+    function atualizarBarra() {
+      const fill = document.getElementById("fill");
+      if (fill) fill.style.width = (tempo / tempoMax * 100) + "%";
+    }
+
+    function responder(i) {
+      clearInterval(intervalo);
+      if (i === perguntas[atual].c) pontos++;
       proxima();
     }
-  },1000);
-}
 
-function responder(i){
-  clearInterval(intervalo);
-  if(i===perguntas[atual].c){
-    pontos++;
-    somAcerto.play().catch(()=>{});
-    document.getElementById("fb").innerText="Correto!";
-  }else{
-    somErro.play().catch(()=>{});
-    document.getElementById("fb").innerText="Errado!";
-  }
-  setTimeout(proxima,800);
-}
+    function proxima() {
+      atual++;
+      atual < perguntas.length ? carregar() : fim();
+    }
 
-function proxima(){
-  atual++;
-  atual>=perguntas.length ? fim() : carregar();
-}
+    function fim() {
+      app.innerHTML = `
+        <h2>Sua alma foi julgada…</h2>
+        <p>Pontuação: <b>${pontos}</b></p>
+        <button onclick="telaInicial()">Jogar novamente</button>
+      `;
+    }
 
-function fim(){
-  const nome =
-salvarRanking(nomeJogador, pontos);
-  app.innerHTML=`
-    <h1>Sua alma foi julgada 👻</h1>
-    <p>Pontuação: <b>${pontos}</b></p>
-    <button onclick="telaRanking()">Ver Ranking</button>
-    <button onclick="telaInicial()">Jogar novamente</button>
-  `;
-}
-
-/* START */
-telaInicial();
-</script>
+    telaInicial();
+  </script>
 </body>
 </html>

@@ -49,6 +49,25 @@ button:hover{ background:#900; }
   width:100%;
   background:#f00;
 }
+
+/* ===== EFEITO DE TREMIDA ===== */
+.shake{
+  animation: shake 0.35s;
+}
+@keyframes shake{
+  0%{ transform:translateX(0); }
+  20%{ transform:translateX(-6px); }
+  40%{ transform:translateX(6px); }
+  60%{ transform:translateX(-6px); }
+  80%{ transform:translateX(6px); }
+  100%{ transform:translateX(0); }
+}
+
+/* feedback */
+#feedback{
+  margin-top:10px;
+  font-weight:bold;
+}
 </style>
 </head>
 
@@ -62,7 +81,7 @@ const app = document.getElementById("app");
 const somAcerto = new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg");
 const somErro   = new Audio("https://actions.google.com/sounds/v1/cartoon/boing.ogg");
 
-/* ===== PERGUNTAS POR TEMA ===== */
+/* perguntas */
 const banco = {
   terror: [
     { q:"Quem é o vilão de Halloween?", o:["Freddy","Jason","Michael Myers","Chucky"], c:2 },
@@ -150,6 +169,7 @@ function carregar(){
     ${perguntas[atual].o.map((op,i)=>
       `<button onclick="responder(${i})">${op}</button>`
     ).join("")}
+    <div id="feedback"></div>
   `;
   iniciarTempo();
 }
@@ -162,7 +182,7 @@ function iniciarTempo(){
     fill.style.width = (tempo/tempoMax*100)+"%";
     if(tempo<=0){
       clearInterval(intervalo);
-      somErro.play();
+      erro();
       proxima();
     }
   },1000);
@@ -173,10 +193,26 @@ function responder(i){
   if(i === perguntas[atual].c){
     pontos++;
     somAcerto.play();
+    feedback("✔️ Correto!", "#0f0");
   }else{
-    somErro.play();
+    erro();
   }
   proxima();
+}
+
+function erro(){
+  somErro.play();
+  app.classList.add("shake");
+  feedback("💀 Sua alma enfraquece…", "#f66");
+  setTimeout(()=>app.classList.remove("shake"), 350);
+}
+
+function feedback(txt, cor){
+  const f = document.getElementById("feedback");
+  if(f){
+    f.innerText = txt;
+    f.style.color = cor;
+  }
 }
 
 function proxima(){
@@ -184,7 +220,7 @@ function proxima(){
   setTimeout(()=>{
     if(atual < perguntas.length) carregar();
     else fim();
-  },600);
+  },700);
 }
 
 function fim(){

@@ -196,6 +196,13 @@ function fim(){
 }
 
 iniciarQuiz();
+const somErro = new Audio("https://assets.mixkit.co/active_storage/sfx/950/950-preview.mp3");
+document.addEventListener("click", () => {
+  somErro.play().then(() => {
+    somErro.pause();
+    somErro.currentTime = 0;
+  }).catch(()=>{});
+}, { once: true });
 </script>
 </body>
 </html>

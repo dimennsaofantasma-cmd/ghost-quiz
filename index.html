@@ -57,110 +57,17 @@ button:hover{background:#900;}
 <div id="app"></div>
 
 <script>
-/* ===== SONS ===== */
-const somAcerto = new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg");
-const somErro   = new Audio("https://actions.google.com/sounds/v1/cartoon/boing.ogg");
-let audioLiberado = false;
-
-function liberarAudio(){
-  if(audioLiberado) return;
-
-  somAcerto.volume = 0;
-  somErro.volume = 0;
-
-  somAcerto.play().then(() => {
-    somAcerto.pause();
-    somAcerto.currentTime = 0;
-    somAcerto.volume = 1;
-  }).catch(()=>{});
-
-  somErro.play().then(() => {
-    somErro.pause();
-    somErro.currentTime = 0;
-    somErro.volume = 1;
-  }).catch(()=>{});
-
-  audioLiberado = true;
-}
-
-/* ===== BANCO ===== */
+/* ===== BANCO DE PERGUNTAS ===== */
 const banco = {
   terror: [
-    {
-      q: "Quem é o vilão do filme Halloween?",
-      o: ["Freddy Krueger","Jason Voorhees","Michael Myers","Chucky"],
-      c: 2
-    },
-    {
-      q: "Qual assassino usa uma máscara de hóquei?",
-      o: ["Leatherface","Michael Myers","Jason Voorhees","Ghostface"],
-      c: 2
-    },
-    {
-      q: "Em Sexta-Feira 13, onde se passa a história?",
-      o: ["Crystal Lake","Silent Hill","Haddonfield","Elm Street"],
-      c: 0
-    },
-    {
-      q: "Qual vilão ataca as vítimas nos sonhos?",
-      o: ["Jason","Freddy Krueger","Chucky","Pennywise"],
-      c: 1
-    },
-    {
-      q: "Qual filme se passa em um hotel isolado?",
-      o: ["O Iluminado","O Exorcista","A Bruxa","O Chamado"],
-      c: 0
-    }
+    { q:"Quem é o vilão de Halloween?", o:["Jason","Freddy","Michael Myers","Chucky"], c:2 },
+    { q:"Quem usa máscara de hóquei?", o:["Ghostface","Jason","Leatherface","Chucky"], c:1 }
   ],
-
-  invocacao: [
-    {
-      q: "Qual boneca faz parte do universo Invocação do Mal?",
-      o: ["Chucky","Annabelle","Billy","M3GAN"],
-      c: 1
-    },
-    {
-      q: "Quem são os investigadores paranormais do filme?",
-      o: ["Ed e Lorraine Warren","Mulder e Scully","Van Helsing","Padre Karras"],
-      c: 0
-    },
-    {
-      q: "Qual entidade aparece no filme A Freira?",
-      o: ["Valak","Pazuzu","Bagul","Baphomet"],
-      c: 0
-    },
-    {
-      q: "Qual filme do universo mostra um brinquedo amaldiçoado?",
-      o: ["A Freira","Invocação do Mal","Annabelle","O Exorcista"],
-      c: 2
-    }
-  ],
-
   lendas: [
-    {
-      q: "Qual lenda urbana aparece em banheiros escolares?",
-      o: ["Loira do Banheiro","Cuca","Mula-sem-cabeça","Iara"],
-      c: 0
-    },
-    {
-      q: "Qual criatura do folclore protege as florestas?",
-      o: ["Saci","Curupira","Boitatá","Boto"],
-      c: 1
-    },
-    {
-      q: "Qual lenda seduz pessoas nos rios?",
-      o: ["Iara","Cuca","Loira do Banheiro","Banshee"],
-      c: 0
-    },
-    {
-
-      q: "Qual criatura tem os pés virados para trás?",
-      o: ["Saci", "Curupira", "Cuca", "Boitatá"],
-      c: 1
-    }
-  ] // fecha lendas
-};  // fecha banco
-
+    { q:"Quem aparece em banheiros escolares?", o:["Cuca","Loira do Banheiro","Iara","Banshee"], c:1 },
+    { q:"Quem protege as florestas?", o:["Saci","Curupira","Boto","Boitatá"], c:1 }
+  ]
+};
 
 let perguntas=[], atual=0, pontos=0, tempo=15, intervalo=null;
 const app = document.getElementById("app");
@@ -170,7 +77,7 @@ function telaInicial(){
   app.innerHTML=`
     <h1>Ghost Quiz 👻</h1>
     <p>Você ousa entrar nesta dimensão?</p>
-    <button onclick="liberarAudio(); telaTempo()">Iniciar Quiz</button>
+    <button onclick="telaTempo()">Iniciar Quiz</button>
   `;
 }
 
@@ -191,8 +98,7 @@ function definirTempo(t){
 function telaTema(){
   app.innerHTML=`
     <h2>Escolha o tema</h2>
-    <button onclick="iniciar('terror')">🔪 Terror Clássico</button>
-    <button onclick="iniciar('invocacao')">📖 Invocação do Mal</button>
+    <button onclick="iniciar('terror')">🔪 Terror</button>
     <button onclick="iniciar('lendas')">🌫️ Lendas Urbanas</button>
   `;
 }
@@ -213,7 +119,7 @@ function carregar(){
     ${p.o.map((op,i)=>`<button onclick="responder(${i})">${op}</button>`).join("")}
     <p>Pontos: ${pontos}</p>
   `;
-  app.style.borderColor = "#900";
+  app.style.borderColor="#900";
   iniciarTempo();
 }
 
@@ -224,11 +130,9 @@ function iniciarTempo(){
   clearInterval(intervalo);
   intervalo=setInterval(()=>{
     t--;
-
     fill.style.width=(t/tempo*100)+"%";
     if(t<=0){
       clearInterval(intervalo);
-      somErro.play().catch(()=>{});
       proxima();
     }
   },1000);
@@ -238,11 +142,9 @@ function responder(i){
   clearInterval(intervalo);
   if(i===perguntas[atual].c){
     pontos++;
-    somAcerto.play().catch(()=>{});
-    
+    app.style.borderColor="lime";
   }else{
-    somErro.play().catch(()=>{});
-  }
+    app.style.borderColor="red";
   }
   setTimeout(proxima,600);
 }
@@ -257,26 +159,7 @@ function fim(){
   app.innerHTML=`
     <h2>Sua alma foi julgada…</h2>
     <p>Pontuação final: <b>${pontos}</b></p>
-    <input id="nome" placeholder="Seu nome">
-    <button onclick="salvar()">Salvar Ranking</button>
     <button onclick="telaInicial()">Jogar novamente</button>
-  `;
-}
-
-function salvar(){
-  const nome=document.getElementById("nome").value || "Anônimo";
-  let r=JSON.parse(localStorage.getItem("ranking")||"[]");
-  r.push({nome,pontos});
-  localStorage.setItem("ranking",JSON.stringify(r));
-  telaRanking();
-}
-
-function telaRanking(){
-  const r=JSON.parse(localStorage.getItem("ranking")||"[]");
-  app.innerHTML=`
-    <h2>Ranking</h2>
-    ${r.map(x=>`<p>${x.nome}: ${x.pontos}</p>`).join("")}
-    <button onclick="telaInicial()">Voltar</button>
   `;
 }
 

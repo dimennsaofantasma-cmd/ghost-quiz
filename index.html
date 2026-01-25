@@ -239,10 +239,10 @@ function responder(i){
   if(i===perguntas[atual].c){
     pontos++;
     somAcerto.play().catch(()=>{});
-    app.style.borderColor = "lime";
+    
   }else{
     somErro.play().catch(()=>{});
-  }app.style.borderColor = "red";
+  }
   }
   setTimeout(proxima,600);
 }

@@ -6,210 +6,80 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-*{box-sizing:border-box}
-
-body{
-  margin:0;
-  background:#000;
-  color:#fff;
-  font-family:Arial, Helvetica, sans-serif;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
+body {
+  margin: 0;
+  background: #000;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
-.box{
-  width:90%;
-  max-width:420px;
-  background:#111;
-  border:2px solid #900;
-  border-radius:14px;
-  padding:20px;
-  box-shadow:0 0 25px #400;
-  text-align:center;
+.box {
+  width: 90%;
+  max-width: 420px;
+  background: #111;
+  border: 2px solid #900;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 0 20px #400;
+  text-align: center;
 }
 
-h1{
-  margin-top:0;
-  color:#ff2a2a;
+h1 {
+  color: #ff2a2a;
 }
 
-button{
-  width:100%;
-  padding:12px;
-  margin:8px 0;
-  background:#222;
-  color:#fff;
-  border:1px solid #900;
-  border-radius:8px;
-  font-size:16px;
+button {
+  width: 100%;
+  padding: 14px;
+  margin: 10px 0;
+  background: #222;
+  color: #fff;
+  border: 1px solid #900;
+  border-radius: 8px;
+  font-size: 16px;
 }
 
-button:hover{background:#900}
-
-#timer,#score{margin:8px 0}
-
-.bar{
-  height:10px;
-  background:#400;
-  border-radius:6px;
-  overflow:hidden;
-  margin:8px 0;
+button:hover {
+  background: #900;
 }
-.bar span{
-  display:block;
-  height:100%;
-  background:#f00;
-  width:100%;
-  transition:width 1s linear;
-}
-
-#feedback{
-  margin-top:10px;
-  font-weight:bold;
-}
-
-.hide{display:none}
 </style>
 </head>
 
 <body>
 
-<div class="box" id="startScreen">
+<div class="box" id="tela">
   <h1>Ghost Quiz 👻</h1>
-  <p>
-    Você ousa entrar nesta dimensão?<br>
-    Responda ao quiz… ou perca sua alma.
-  </p>
-  <button onclick="iniciarQuiz()">Iniciar Quiz</button>
-</div>
+  <p>Escolha o tema… se tiver coragem.</p>
 
-<div class="box hide" id="quizScreen">
-  <h1>Ghost Quiz 👻</h1>
-  <div id="timer">⏱️ 15s</div>
-  <div class="bar"><span id="progress"></span></div>
-  <div id="score">Pontos: 0</div>
-  <p id="question"></p>
-  <div id="answers"></div>
-  <div id="feedback"></div>
+  <button onclick="escolherTema('terror')">🔪 Terror Clássico</button>
+  <button onclick="escolherTema('invocacao')">📖 Invocação do Mal</button>
+  <button onclick="escolherTema('lendas')">🌫️ Lendas Urbanas</button>
 </div>
 
 <script>
-// ===== CONFIGURAÇÃO =====
-const tempoMax = 15;
+let temaEscolhido = "";
 
-// ===== PERGUNTAS =====
-const perguntas = [
-  {
-    q: "Quem é o vilão de Halloween?",
-    a: ["Freddy Krueger","Jason Voorhees","Michael Myers","Chucky"],
-    c: 2
-  },
-  {
-    q: "Qual filme faz parte do universo Invocação do Mal?",
-    a: ["Jogos Mortais","Annabelle","O Iluminado","A Bruxa"],
-    c: 1
-  }
-];
+function escolherTema(tema) {
+  temaEscolhido = tema;
 
-// ===== ESTADO =====
-let atual = 0;
-let pontos = 0;
-let tempo = tempoMax;
-let intervalo;
-
-// ===== SONS =====
-const somAcerto = new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg");
-const somTempo  = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
-
-// desbloqueia áudio no celular
-document.addEventListener("click",()=>{
-  somAcerto.play().then(()=>{
-    somAcerto.pause();
-    somAcerto.currentTime = 0;
-  }).catch(()=>{});
-},{once:true});
-
-// ===== FUNÇÕES =====
-function iniciarQuiz(){
-  document.getElementById("startScreen").classList.add("hide");
-  document.getElementById("quizScreen").classList.remove("hide");
-  iniciar();
+  document.getElementById("tela").innerHTML = `
+    <h1>👻 Tema escolhido</h1>
+    <p>${tema.toUpperCase()}</p>
+    <button onclick="iniciarQuiz()">Iniciar Quiz</button>
+  `;
 }
 
-function iniciar(){
-  atual = 0;
-  pontos = 0;
-  carregar();
-}
-
-function carregar(){
-  clearInterval(intervalo);
-  tempo = tempoMax;
-
-  document.getElementById("feedback").innerText = "";
-  document.getElementById("question").innerText = perguntas[atual].q;
-  document.getElementById("score").innerText = "Pontos: " + pontos;
-  document.getElementById("timer").innerText = "⏱️ " + tempo + "s";
-  document.getElementById("progress").style.width = "100%";
-
-  const div = document.getElementById("answers");
-  div.innerHTML = "";
-
-  perguntas[atual].a.forEach((txt,i)=>{
-    const b = document.createElement("button");
-    b.innerText = txt;
-    b.onclick = ()=>responder(i);
-    div.appendChild(b);
-  });
-
-  intervalo = setInterval(()=>{
-    tempo--;
-    document.getElementById("timer").innerText = "⏱️ " + tempo + "s";
-    document.getElementById("progress").style.width = (tempo/tempoMax*100)+"%";
-    if(tempo<=0){
-      clearInterval(intervalo);
-      somTempo.play();
-      proxima();
-    }
-  },1000);
-}
-
-function responder(i){
-  clearInterval(intervalo);
-  if(i === perguntas[atual].c){
-    pontos++;
-    somAcerto.play();
-    feedback("✔️ Correto!", "#0f0");
-  }else{
-    feedback("❌ Errado!", "#f66");
-  }
-  setTimeout(proxima,700);
-}
-
-function feedback(txt,cor){
-  const f = document.getElementById("feedback");
-  f.innerText = txt;
-  f.style.color = cor;
-}
-
-function proxima(){
-  atual++;
-  if(atual < perguntas.length){
-    carregar();
-  }else{
-    fim();
-  }
-}
-
-function fim(){
-  document.getElementById("quizScreen").innerHTML = `
-    <h1>Fim do Quiz 👻</h1>
-    <p>Pontuação final: <b>${pontos}</b></p>
-    <button onclick="location.reload()">Voltar ao início</button>
+function iniciarQuiz() {
+  document.getElementById("tela").innerHTML = `
+    <h1>Em breve…</h1>
+    <p>O quiz do tema <b>${temaEscolhido}</b> vai começar.</p>
   `;
 }
 </script>
+
 </body>
 </html>

@@ -6,11 +6,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
+*{box-sizing:border-box}
+
 body{
   margin:0;
   background:#000;
   color:#fff;
-  font-family: Arial, sans-serif;
+  font-family:Arial, Helvetica, sans-serif;
   display:flex;
   justify-content:center;
   align-items:center;
@@ -22,18 +24,21 @@ body{
   max-width:420px;
   background:#111;
   border:2px solid #900;
-  border-radius:12px;
+  border-radius:14px;
   padding:20px;
-  box-shadow:0 0 20px #400;
+  box-shadow:0 0 25px #400;
   text-align:center;
 }
 
-h1{ color:#ff2a2a; margin-top:0; }
+h1{
+  margin-top:0;
+  color:#ff2a2a;
+}
 
 button{
   width:100%;
   padding:12px;
-  margin:8px 0;
+  margin:6px 0;
   background:#222;
   color:#fff;
   border:1px solid #900;
@@ -41,11 +46,9 @@ button{
   font-size:16px;
 }
 
-button:hover{ background:#900; }
+button:hover{background:#900}
 
-#timer{ margin:10px 0; }
-#score{ margin:8px 0; }
-#feedback{ margin-top:10px; font-weight:bold; }
+#timer,#score{margin:8px 0}
 
 .bar{
   height:10px;
@@ -59,6 +62,12 @@ button:hover{ background:#900; }
   height:100%;
   background:#f00;
   width:100%;
+  transition:width 1s linear;
+}
+
+#feedback{
+  margin-top:10px;
+  font-weight:bold;
 }
 </style>
 </head>
@@ -75,6 +84,10 @@ button:hover{ background:#900; }
 </div>
 
 <script>
+// ===== CONFIGURAÇÃO =====
+const tempoMax = 15;
+
+// ===== PERGUNTAS =====
 const perguntas = [
   {
     q: "Quem é o vilão de Halloween?",
@@ -88,16 +101,26 @@ const perguntas = [
   }
 ];
 
+// ===== ESTADO =====
 let atual = 0;
 let pontos = 0;
-let tempoMax = 15;
 let tempo = tempoMax;
 let intervalo;
 
-const somCerto = new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg");
-const somErrado = new Audio("https://actions.google.com/sounds/v1/cartoon/boing.ogg");
-const somTempo = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
+// ===== SONS =====
+const somAcerto = new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg");
+const somErro   = new Audio("https://actions.google.com/sounds/v1/cartoon/boing.ogg");
+const somTempo  = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
 
+// desbloqueia áudio no celular
+document.addEventListener("click",()=>{
+  somAcerto.play().then(()=>{
+    somAcerto.pause();
+    somAcerto.currentTime = 0;
+  }).catch(()=>{});
+},{once:true});
+
+// ===== FUNÇÕES =====
 function iniciar(){
   atual = 0;
   pontos = 0;
@@ -140,10 +163,9 @@ function responder(i){
   clearInterval(intervalo);
   if(i === perguntas[atual].c){
     pontos++;
-    somCerto.play();
+    somAcerto.play();
     feedback("✔️ Correto!", "#0f0");
   }else{
-    somErrado.play();
     feedback("❌ Errado!", "#f66");
   }
   setTimeout(proxima,700);
@@ -172,13 +194,7 @@ function fim(){
   `;
 }
 
-document.addEventListener("click",()=>{
-  somCerto.play().then(()=>{
-    somCerto.pause();
-    somCerto.currentTime=0;
-  }).catch(()=>{});
-},{once:true});
-
+// ===== START =====
 iniciar();
 </script>
 </body>

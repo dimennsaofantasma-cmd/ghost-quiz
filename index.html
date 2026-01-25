@@ -38,12 +38,20 @@ button{
   font-size:16px;
 }
 button:hover{background:#900;}
+input{
+  width:100%;
+  padding:10px;
+  margin:8px 0;
+  border-radius:6px;
+  border:none;
+}
 #timerBar{
   height:10px;
   background:#900;
   border-radius:5px;
   margin-bottom:10px;
 }
+ol{padding-left:18px;text-align:left}
 </style>
 </head>
 
@@ -73,12 +81,31 @@ let perguntas=[], atual=0, pontos=0;
 let tempoPadrao=15, tempo=15, intervalo=null;
 const app=document.getElementById("app");
 
+/* ===== RANKING (localStorage) ===== */
+function salvarRanking(nome, pontos){
+  const key = "ghostRanking";
+  const lista = JSON.parse(localStorage.getItem(key) || "[]");
+  lista.push({ nome, pontos });
+  lista.sort((a,b)=>b.pontos-a.pontos);
+  localStorage.setItem(key, JSON.stringify(lista.slice(0,10)));
+}
+function telaRanking(){
+  const lista = JSON.parse(localStorage.getItem("ghostRanking") || "[]");
+  app.innerHTML = `
+    <h1>🏆 Ranking Fantasma</h1>
+    ${lista.length ? `<ol>${lista.map(i=>`<li>${i.nome} — ${i.pontos} pts</li>`).join("")}</ol>` : "<p>Sem registros ainda.</p>"}
+    <button onclick="telaInicial()">Voltar</button>
+  `;
+}
+
 /* ===== TELAS ===== */
 function telaInicial(){
   app.innerHTML=`
     <h1>Ghost Quiz 👻</h1>
     <p>Você ousa entrar nesta dimensão?</p>
+    <input id="nome" placeholder="Seu nome (opcional)">
     <button onclick="telaTempo()">Iniciar Quiz</button>
+    <button onclick="telaRanking()">Ver Ranking</button>
   `;
 }
 
@@ -158,9 +185,12 @@ function proxima(){
 }
 
 function fim(){
+  const nome = document.getElementById("nome")?.value?.trim() || "Anônimo";
+  salvarRanking(nome, pontos);
   app.innerHTML=`
     <h1>Sua alma foi julgada 👻</h1>
     <p>Pontuação: <b>${pontos}</b></p>
+    <button onclick="telaRanking()">Ver Ranking</button>
     <button onclick="telaInicial()">Jogar novamente</button>
   `;
 }

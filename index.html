@@ -4,82 +4,176 @@
 <meta charset="UTF-8">
 <title>Ghost Quiz 👻</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
-body {
-  margin: 0;
-  background: #000;
-  color: #fff;
-  font-family: Arial, sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+body{
+  margin:0;
+  background:#000;
+  color:#fff;
+  font-family:Arial, sans-serif;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
 }
-
-.box {
-  width: 90%;
-  max-width: 420px;
-  background: #111;
-  border: 2px solid #900;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 0 20px #400;
-  text-align: center;
+.box{
+  width:90%;
+  max-width:420px;
+  background:#111;
+  border:2px solid #900;
+  border-radius:12px;
+  padding:20px;
+  text-align:center;
+  box-shadow:0 0 20px #400;
 }
-
-h1 {
-  color: #ff2a2a;
+h1{ color:#ff2a2a; margin-top:0; }
+button{
+  width:100%;
+  padding:12px;
+  margin:8px 0;
+  background:#222;
+  color:#fff;
+  border:1px solid #900;
+  border-radius:8px;
+  font-size:16px;
 }
-
-button {
-  width: 100%;
-  padding: 14px;
-  margin: 10px 0;
-  background: #222;
-  color: #fff;
-  border: 1px solid #900;
-  border-radius: 8px;
-  font-size: 16px;
+button:hover{ background:#900; }
+.hidden{ display:none; }
+#bar{
+  height:10px;
+  background:#400;
+  border-radius:5px;
+  overflow:hidden;
+  margin:10px 0;
 }
-
-button:hover {
-  background: #900;
+#bar div{
+  height:100%;
+  width:100%;
+  background:#f00;
 }
 </style>
 </head>
 
 <body>
-
-<div class="box" id="tela">
-  <h1>Ghost Quiz 👻</h1>
-  <p>Escolha o tema… se tiver coragem.</p>
-
-  <button onclick="escolherTema('terror')">🔪 Terror Clássico</button>
-  <button onclick="escolherTema('invocacao')">📖 Invocação do Mal</button>
-  <button onclick="escolherTema('lendas')">🌫️ Lendas Urbanas</button>
-</div>
+<div class="box" id="app"></div>
 
 <script>
-let temaEscolhido = "";
+const app = document.getElementById("app");
 
-function escolherTema(tema) {
-  temaEscolhido = tema;
+/* sons */
+const somAcerto = new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg");
+const somErro   = new Audio("https://actions.google.com/sounds/v1/cartoon/boing.ogg");
 
-  document.getElementById("tela").innerHTML = `
-    <h1>👻 Tema escolhido</h1>
-    <p>${tema.toUpperCase()}</p>
-    <button onclick="iniciarQuiz()">Iniciar Quiz</button>
+/* perguntas */
+const perguntas = [
+  {
+    q:"Quem é o vilão de Halloween?",
+    o:["Freddy Krueger","Jason Voorhees","Michael Myers","Chucky"],
+    c:2
+  },
+  {
+    q:"Qual filme faz parte do universo Invocação do Mal?",
+    o:["Jogos Mortais","Annabelle","O Iluminado","A Bruxa"],
+    c:1
+  }
+];
+
+let atual = 0;
+let pontos = 0;
+let tempo = 10;
+let intervalo;
+
+/* telas */
+function telaInicial(){
+  app.innerHTML = `
+    <h1>Ghost Quiz 👻</h1>
+    <p>Você ousa entrar nesta dimensão?<br>Responda ao quiz… ou perca sua alma.</p>
+    <button onclick="telaTransicao()">Iniciar Quiz</button>
   `;
 }
 
-function iniciarQuiz() {
-  document.getElementById("tela").innerHTML = `
-    <h1>Em breve…</h1>
-    <p>O quiz do tema <b>${temaEscolhido}</b> vai começar.</p>
+function telaTransicao(){
+  app.innerHTML = `
+    <h1>⚠️</h1>
+    <p><b>A dimensão se abre.<br>Não há mais volta.<br><br>Sua alma está em jogo.</b></p>
+  `;
+  setTimeout(telaTemas, 2500);
+}
+
+function telaTemas(){
+  app.innerHTML = `
+    <h1>Ghost Quiz 👻</h1>
+    <p>Escolha o tema… se tiver coragem.</p>
+    <button onclick="iniciarQuiz()">🔪 Terror Clássico</button>
+    <button onclick="iniciarQuiz()">📖 Invocação do Mal</button>
+    <button onclick="iniciarQuiz()">🌫️ Lendas Urbanas</button>
   `;
 }
+
+/* quiz */
+function iniciarQuiz(){
+  atual = 0;
+  pontos = 0;
+  carregar();
+}
+
+function carregar(){
+  tempo = 10;
+  app.innerHTML = `
+    <h1>Ghost Quiz 👻</h1>
+    <div id="bar"><div id="fill"></div></div>
+    <p>Pontos: ${pontos}</p>
+    <p>${perguntas[atual].q}</p>
+    ${perguntas[atual].o.map((op,i)=>
+      `<button onclick="responder(${i})">${op}</button>`
+    ).join("")}
+  `;
+  iniciarTempo();
+}
+
+function iniciarTempo(){
+  const fill = document.getElementById("fill");
+  clearInterval(intervalo);
+  intervalo = setInterval(()=>{
+    tempo--;
+    fill.style.width = (tempo*10)+"%";
+    if(tempo<=0){
+      clearInterval(intervalo);
+      somErro.play();
+      proxima();
+    }
+  },1000);
+}
+
+function responder(i){
+  clearInterval(intervalo);
+  if(i === perguntas[atual].c){
+    pontos++;
+    somAcerto.play();
+  }else{
+    somErro.play();
+  }
+  proxima();
+}
+
+function proxima(){
+  atual++;
+  setTimeout(()=>{
+    if(atual < perguntas.length) carregar();
+    else fim();
+  },600);
+}
+
+function fim(){
+  app.innerHTML = `
+    <h1>💀 Fim do Quiz</h1>
+    <p>Sua alma foi julgada…</p>
+    <p>Pontuação final: <b>${pontos}</b></p>
+    <button onclick="telaInicial()">Tentar novamente</button>
+  `;
+}
+
+/* start */
+telaInicial();
 </script>
-
 </body>
 </html>

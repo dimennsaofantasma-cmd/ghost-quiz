@@ -25,7 +25,7 @@ body {
   box-shadow: 0 0 20px #400;
   text-align: center;
 }
-h1 { color: #ff2a2a; }
+h1 { color: #ff2a2a; margin-top: 0; }
 button {
   width: 100%;
   padding: 12px;
@@ -37,7 +37,9 @@ button {
   font-size: 16px;
 }
 button:hover { background: #900; }
-#timer { margin: 10px 0; }
+#timer { margin: 8px 0; }
+#score { margin: 8px 0; }
+#feedback { margin-top: 10px; font-weight: bold; }
 </style>
 </head>
 <body>
@@ -45,8 +47,10 @@ button:hover { background: #900; }
 <div class="box">
   <h1>Ghost Quiz 👻</h1>
   <div id="timer">⏱️ 15</div>
+  <div id="score">Pontos: 0</div>
   <p id="question"></p>
   <div id="answers"></div>
+  <div id="feedback"></div>
 </div>
 
 <script>
@@ -66,29 +70,48 @@ const perguntas = [
 let atual = 0;
 let tempo = 15;
 let intervalo;
+let pontos = 0;
 
 function carregar() {
+  document.getElementById("feedback").innerText = "";
   document.getElementById("question").innerText = perguntas[atual].q;
+  document.getElementById("score").innerText = "Pontos: " + pontos;
+
   const div = document.getElementById("answers");
   div.innerHTML = "";
+
   perguntas[atual].a.forEach((txt,i)=>{
     const b=document.createElement("button");
     b.innerText=txt;
     b.onclick=()=>responder(i);
     div.appendChild(b);
   });
+
   iniciarTempo();
 }
 
 function responder(i){
   clearInterval(intervalo);
-  atual++;
-  if(atual < perguntas.length){
-    carregar();
+  const correta = perguntas[atual].c;
+
+  if(i === correta){
+    pontos += 10;
+    document.getElementById("feedback").innerText = "✔️ Correto!";
+    document.getElementById("feedback").style.color = "#0f0";
   } else {
-    document.querySelector(".box").innerHTML =
-      "<h1>Fim do Quiz 👻</h1><p>Você sobreviveu.</p>";
+    document.getElementById("feedback").innerText =
+      "❌ Errado! Correta: " + perguntas[atual].a[correta];
+    document.getElementById("feedback").style.color = "#f00";
   }
+
+  setTimeout(()=>{
+    atual++;
+    if(atual < perguntas.length){
+      carregar();
+    } else {
+      fim();
+    }
+  }, 1200);
 }
 
 function iniciarTempo(){
@@ -102,6 +125,12 @@ function iniciarTempo(){
       responder(-1);
     }
   },1000);
+}
+
+function fim(){
+  document.querySelector(".box").innerHTML =
+    "<h1>Fim do Quiz 👻</h1>" +
+    "<p>Pontuação final: <b>"+pontos+"</b></p>";
 }
 
 carregar();

@@ -26,7 +26,7 @@ body{
   box-shadow:0 0 20px #400;
   text-align:center;
 }
-h1{color:#ff2a2a;}
+h1,h2{color:#ff2a2a;}
 button{
   width:100%;
   padding:12px;
@@ -57,36 +57,37 @@ button:hover{background:#900;}
 <div id="app"></div>
 
 <script>
-/* ===== BANCO DE PERGUNTAS ===== */
+/* ===== BANCO ===== */
 const banco = {
   terror: [
-    { q:"Quem é o vilão de Halloween?", o:["Jason","Freddy","Michael Myers","Chucky"], c:2 },
-    { q:"Quem usa máscara de hóquei?", o:["Ghostface","Jason","Leatherface","Chucky"], c:1 }
+    { q:"Quem é o vilão do filme Halloween?", o:["Freddy","Jason","Michael Myers","Chucky"], c:2 },
+    { q:"Qual assassino usa máscara de hóquei?", o:["Leatherface","Michael Myers","Jason","Ghostface"], c:2 },
+    { q:"Em Sexta-Feira 13, onde se passa?", o:["Crystal Lake","Silent Hill","Haddonfield","Elm Street"], c:0 }
   ],
   lendas: [
-    { q:"Quem aparece em banheiros escolares?", o:["Cuca","Loira do Banheiro","Iara","Banshee"], c:1 },
-    { q:"Quem protege as florestas?", o:["Saci","Curupira","Boto","Boitatá"], c:1 }
+    { q:"Lenda de banheiros escolares?", o:["Loira do Banheiro","Cuca","Iara","Mula"], c:0 },
+    { q:"Criatura de pés virados?", o:["Saci","Curupira","Boitatá","Boto"], c:1 }
   ]
 };
 
 let perguntas=[], atual=0, pontos=0, tempo=15, intervalo=null;
-const app = document.getElementById("app");
+const app=document.getElementById("app");
 
 /* ===== TELAS ===== */
 function telaInicial(){
   app.innerHTML=`
     <h1>Ghost Quiz 👻</h1>
-    <p>Você ousa entrar nesta dimensão?</p>
-    <button onclick="telaTempo()">Iniciar Quiz</button>
+    <p>Você ousa entrar?</p>
+    <button onclick="telaTempo()">Iniciar</button>
   `;
 }
 
 function telaTempo(){
   app.innerHTML=`
     <h2>Escolha o tempo</h2>
-    <button onclick="definirTempo(15)">15 segundos</button>
-    <button onclick="definirTempo(20)">20 segundos</button>
-    <button onclick="definirTempo(30)">30 segundos</button>
+    <button onclick="definirTempo(15)">15s</button>
+    <button onclick="definirTempo(20)">20s</button>
+    <button onclick="definirTempo(30)">30s</button>
   `;
 }
 
@@ -99,7 +100,7 @@ function telaTema(){
   app.innerHTML=`
     <h2>Escolha o tema</h2>
     <button onclick="iniciar('terror')">🔪 Terror</button>
-    <button onclick="iniciar('lendas')">🌫️ Lendas Urbanas</button>
+    <button onclick="iniciar('lendas')">🌫️ Lendas</button>
   `;
 }
 
@@ -133,33 +134,56 @@ function iniciarTempo(){
     fill.style.width=(t/tempo*100)+"%";
     if(t<=0){
       clearInterval(intervalo);
-      proxima();
+      responder(-1);
     }
   },1000);
 }
 
 function responder(i){
   clearInterval(intervalo);
+
   if(i===perguntas[atual].c){
     pontos++;
     app.style.borderColor="lime";
+    app.insertAdjacentHTML("beforeend",
+      "<p style='color:lime;font-weight:bold'>✔ Acertou!</p>");
   }else{
     app.style.borderColor="red";
+    app.insertAdjacentHTML("beforeend",
+      "<p style='color:red;font-weight:bold'>✖ Errou!</p>");
   }
-  setTimeout(proxima,600);
-}
 
-function proxima(){
-  atual++;
-  atual<perguntas.length ? carregar() : fim();
+  setTimeout(()=>{
+    atual++;
+    atual<perguntas.length ? carregar() : fim();
+  },800);
 }
 
 /* ===== FIM ===== */
 function fim(){
   app.innerHTML=`
-    <h2>Sua alma foi julgada…</h2>
-    <p>Pontuação final: <b>${pontos}</b></p>
-    <button onclick="telaInicial()">Jogar novamente</button>
+    <h2>Fim do jogo</h2>
+    <p>Pontuação: <b>${pontos}</b></p>
+    <input id="nome" placeholder="Seu nome">
+    <button onclick="salvar()">Salvar ranking</button>
+    <button onclick="telaInicial()">Voltar</button>
+  `;
+}
+
+function salvar(){
+  const nome=document.getElementById("nome").value||"Anônimo";
+  const r=JSON.parse(localStorage.getItem("ranking")||"[]");
+  r.push({nome,pontos});
+  localStorage.setItem("ranking",JSON.stringify(r));
+  telaRanking();
+}
+
+function telaRanking(){
+  const r=JSON.parse(localStorage.getItem("ranking")||"[]");
+  app.innerHTML=`
+    <h2>Ranking</h2>
+    ${r.map(x=>`<p>${x.nome}: ${x.pontos}</p>`).join("")}
+    <button onclick="telaInicial()">Voltar</button>
   `;
 }
 

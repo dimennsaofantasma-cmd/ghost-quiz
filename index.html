@@ -38,7 +38,7 @@ h1{
 button{
   width:100%;
   padding:12px;
-  margin:6px 0;
+  margin:8px 0;
   background:#222;
   color:#fff;
   border:1px solid #900;
@@ -69,11 +69,23 @@ button:hover{background:#900}
   margin-top:10px;
   font-weight:bold;
 }
+
+.hide{display:none}
 </style>
 </head>
 
 <body>
-<div class="box" id="box">
+
+<div class="box" id="startScreen">
+  <h1>Ghost Quiz 👻</h1>
+  <p>
+    Você ousa entrar nesta dimensão?<br>
+    Responda ao quiz… ou perca sua alma.
+  </p>
+  <button onclick="iniciarQuiz()">Iniciar Quiz</button>
+</div>
+
+<div class="box hide" id="quizScreen">
   <h1>Ghost Quiz 👻</h1>
   <div id="timer">⏱️ 15s</div>
   <div class="bar"><span id="progress"></span></div>
@@ -109,7 +121,6 @@ let intervalo;
 
 // ===== SONS =====
 const somAcerto = new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg");
-const somErro   = new Audio("https://actions.google.com/sounds/v1/cartoon/boing.ogg");
 const somTempo  = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
 
 // desbloqueia áudio no celular
@@ -121,6 +132,12 @@ document.addEventListener("click",()=>{
 },{once:true});
 
 // ===== FUNÇÕES =====
+function iniciarQuiz(){
+  document.getElementById("startScreen").classList.add("hide");
+  document.getElementById("quizScreen").classList.remove("hide");
+  iniciar();
+}
+
 function iniciar(){
   atual = 0;
   pontos = 0;
@@ -187,15 +204,12 @@ function proxima(){
 }
 
 function fim(){
-  document.getElementById("box").innerHTML = `
+  document.getElementById("quizScreen").innerHTML = `
     <h1>Fim do Quiz 👻</h1>
     <p>Pontuação final: <b>${pontos}</b></p>
-    <button onclick="location.reload()">Jogar novamente</button>
+    <button onclick="location.reload()">Voltar ao início</button>
   `;
 }
-
-// ===== START =====
-iniciar();
 </script>
 </body>
 </html>

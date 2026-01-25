@@ -5,48 +5,66 @@
 <title>Ghost Quiz 👻</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body {
-  margin: 0;
-  background: #000;
-  color: #fff;
-  font-family: Arial, sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+:root{
+  --bg:#000;
+  --card:#111;
+  --red:#b30000;
+  --red2:#ff1a1a;
+  --txt:#fff;
 }
-.box {
-  width: 90%;
-  max-width: 420px;
-  background: #111;
-  border: 2px solid #900;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 0 20px #400;
-  text-align: center;
+body{
+  margin:0; background:var(--bg); color:var(--txt);
+  font-family:Arial,sans-serif; height:100vh;
+  display:flex; align-items:center; justify-content:center;
 }
-h1 { color: #ff2a2a; margin-top: 0; }
-button {
-  width: 100%;
-  padding: 12px;
-  margin: 8px 0;
-  background: #222;
-  color: #fff;
-  border: 1px solid #900;
-  border-radius: 8px;
-  font-size: 16px;
+.box{
+  width:90%; max-width:420px; background:var(--card);
+  border:2px solid var(--red); border-radius:14px;
+  padding:18px; box-shadow:0 0 22px #400; text-align:center;
 }
-button:hover { background: #900; }
-#timer { margin: 8px 0; }
-#score { margin: 8px 0; }
-#feedback { margin-top: 10px; font-weight: bold; }
+h1{ color:#ff2a2a; margin:0 0 8px; }
+#score{ margin:6px 0; }
+
+/* Barra de tempo */
+.timer-wrap{
+  width:100%; height:12px; background:#222;
+  border-radius:10px; overflow:hidden; margin:8px 0 10px;
+  border:1px solid #400;
+}
+.timer-bar{
+  height:100%; width:100%;
+  background:linear-gradient(180deg,var(--red2),var(--red));
+  transition:width .2s linear;
+}
+.timer-num{ font-size:14px; opacity:.9; margin-bottom:6px; }
+
+button{
+  width:100%; padding:12px; margin:8px 0;
+  background:#222; color:#fff;
+  border:1px solid var(--red); border-radius:10px;
+  font-size:16px;
+}
+button:hover{ background:var(--red); }
+
+#feedback{ margin-top:8px; font-weight:bold; min-height:20px; }
+.shake{ animation:shake .25s linear 2; }
+@keyframes shake{
+  0%{transform:translateX(0)}
+  25%{transform:translateX(-4px)}
+  50%{transform:translateX(4px)}
+  75%{transform:translateX(-4px)}
+  100%{transform:translateX(0)}
+}
 </style>
 </head>
 <body>
 
-<div class="box">
+<div class="box" id="box">
   <h1>Ghost Quiz 👻</h1>
-  <div id="timer">⏱️ 15</div>
+  <div class="timer-num">⏱️ <span id="tNum">15</span>s</div>
+  <div class="timer-wrap">
+    <div class="timer-bar" id="tBar"></div>
+  </div>
   <div id="score">Pontos: 0</div>
   <p id="question"></p>
   <div id="answers"></div>
@@ -54,87 +72,83 @@ button:hover { background: #900; }
 </div>
 
 <script>
-const perguntas = [
-  {
-    q: "Quem é o vilão de Halloween?",
-    a: ["Freddy Krueger","Jason Voorhees","Michael Myers","Chucky"],
-    c: 2
-  },
-  {
-    q: "Qual filme faz parte do universo Invocação do Mal?",
-    a: ["Jogos Mortais","Annabelle","O Iluminado","A Bruxa"],
-    c: 1
-  }
+const perguntas=[
+ {q:"Quem é o vilão de Halloween?",a:["Freddy Krueger","Jason Voorhees","Michael Myers","Chucky"],c:2},
+ {q:"Qual filme faz parte do universo Invocação do Mal?",a:["Jogos Mortais","Annabelle","O Iluminado","A Bruxa"],c:1}
 ];
 
-let atual = 0;
-let tempo = 15;
-let intervalo;
-let pontos = 0;
+let atual=0, pontos=0;
+let tempoTotal=15, tempo=15, intervalo;
 
-function carregar() {
-  document.getElementById("feedback").innerText = "";
-  document.getElementById("question").innerText = perguntas[atual].q;
-  document.getElementById("score").innerText = "Pontos: " + pontos;
+const tBar=document.getElementById("tBar");
+const tNum=document.getElementById("tNum");
+const box=document.getElementById("box");
 
-  const div = document.getElementById("answers");
-  div.innerHTML = "";
-
+function carregar(){
+  document.getElementById("feedback").innerText="";
+  document.getElementById("score").innerText="Pontos: "+pontos;
+  document.getElementById("question").innerText=perguntas[atual].q;
+  const div=document.getElementById("answers");
+  div.innerHTML="";
   perguntas[atual].a.forEach((txt,i)=>{
     const b=document.createElement("button");
     b.innerText=txt;
     b.onclick=()=>responder(i);
     div.appendChild(b);
   });
-
   iniciarTempo();
 }
 
 function responder(i){
   clearInterval(intervalo);
-  const correta = perguntas[atual].c;
-
-  if(i === correta){
-    pontos += 10;
-    document.getElementById("feedback").innerText = "✔️ Correto!";
-    document.getElementById("feedback").style.color = "#0f0";
-  } else {
-    document.getElementById("feedback").innerText =
-      "❌ Errado! Correta: " + perguntas[atual].a[correta];
-    document.getElementById("feedback").style.color = "#f00";
+  const correta=perguntas[atual].c;
+  if(i===correta){
+    pontos+=10;
+    feedback("✔️ Correto!", "#0f0");
+  }else{
+    feedback("❌ Errado! Correta: "+perguntas[atual].a[correta], "#f00");
+    box.classList.add("shake");
+    setTimeout(()=>box.classList.remove("shake"),300);
   }
+  setTimeout(proxima, 900);
+}
 
-  setTimeout(()=>{
-    atual++;
-    if(atual < perguntas.length){
-      carregar();
-    } else {
-      fim();
-    }
-  }, 1200);
+function feedback(txt,color){
+  const f=document.getElementById("feedback");
+  f.innerText=txt; f.style.color=color;
 }
 
 function iniciarTempo(){
-  tempo = 15;
-  document.getElementById("timer").innerText = "⏱️ " + tempo;
-  intervalo = setInterval(()=>{
+  tempo=tempoTotal;
+  tNum.innerText=tempo;
+  tBar.style.width="100%";
+  intervalo=setInterval(()=>{
     tempo--;
-    document.getElementById("timer").innerText = "⏱️ " + tempo;
+    tNum.innerText=tempo;
+    tBar.style.width=(tempo/tempoTotal*100)+"%";
     if(tempo<=0){
       clearInterval(intervalo);
-      responder(-1);
+      feedback("⏰ Tempo esgotado!", "#ff6");
+      box.classList.add("shake");
+      setTimeout(()=>box.classList.remove("shake"),300);
+      setTimeout(proxima, 700);
     }
   },1000);
 }
 
+function proxima(){
+  atual++;
+  if(atual<perguntas.length){ carregar(); }
+  else fim();
+}
+
 function fim(){
-  document.querySelector(".box").innerHTML =
-    "<h1>Fim do Quiz 👻</h1>" +
+  box.innerHTML=
+    "<h1>Fim do Quiz 👻</h1>"+
     "<p>Pontuação final: <b>"+pontos+"</b></p>";
 }
 
 carregar();
 </script>
-
 </body>
 </html>

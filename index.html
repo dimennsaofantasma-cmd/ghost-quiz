@@ -1,99 +1,81 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ghost Quiz</title>
+<title>Ghost Quiz 👻</title>
 
 <style>
 body{
   margin:0;
+  background:#000;
+  color:#fff;
   font-family:Arial, sans-serif;
-  background:#0b0b0b;
-  color:#eee;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
 }
-#app{
-  max-width:600px;
-  margin:30px auto;
-  padding:20px;
+.box{
+  width:90%;
+  max-width:420px;
   background:#111;
+  border:2px solid #900;
   border-radius:12px;
+  padding:20px;
+  box-shadow:0 0 20px #400;
   text-align:center;
 }
+h1{color:#ff2a2a;}
 button{
-  display:block;
   width:100%;
-  margin:10px 0;
   padding:12px;
-  font-size:16px;
-  border:none;
-  border-radius:8px;
-  background:#8b0000;
+  margin:8px 0;
+  background:#222;
   color:#fff;
+  border:1px solid #900;
+  border-radius:8px;
+  font-size:16px;
 }
-input{
-  width:100%;
-  padding:10px;
-  margin:10px 0;
-  border-radius:6px;
-  border:none;
+button:hover{background:#900;}
+#timerBar{
+  height:10px;
+  background:#900;
+  border-radius:5px;
+  margin-bottom:10px;
 }
 </style>
 </head>
 
 <body>
-
-<div id="app"></div>
+<div class="box" id="app"></div>
 
 <script>
-/* ===== ÁUDIO (1 SOM - ESTÁVEL MOBILE) ===== */
-const audio = new Audio();
-document.addEventListener("click",()=>{
-  audio.src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg";
-  audio.play().then(()=>{
-    audio.pause();
-    audio.currentTime=0;
-  }).catch(()=>{});
-},{once:true});
-
-function somAcerto(){
-  audio.src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg";
-  audio.play().catch(()=>{});
-}
-function somErro(){
-  audio.src="https://actions.google.com/sounds/v1/cartoon/boing.ogg";
-  audio.play().catch(()=>{});
-}
+/* ===== SONS ===== */
+const somAcerto = new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg");
+const somErro   = new Audio("https://actions.google.com/sounds/v1/cartoon/boing.ogg");
 
 /* ===== BANCO DE PERGUNTAS ===== */
 const banco = {
   terror: [
-    {
-      q: "Quem é o vilão do filme Halloween?",
-      o: ["Freddy Krueger","Jason Voorhees","Michael Myers","Chucky"],
-      c: 2
-    }
+    { q:"Quem é o vilão de Halloween?", o:["Freddy Krueger","Jason Voorhees","Michael Myers","Chucky"], c:2 },
+    { q:"Quem usa máscara de hóquei?", o:["Jason","Freddy","Chucky","Pennywise"], c:0 }
+  ],
+  invocacao: [
+    { q:"Qual faz parte do Invocação do Mal?", o:["Jogos Mortais","Annabelle","O Iluminado","A Bruxa"], c:1 }
   ],
   lendas: [
-    {
-      q: "Qual lenda urbana é famosa em escolas?",
-      o: ["Loira do Banheiro","Kraken","Drácula","Múmia"],
-      c: 0
-    }
+    { q:"Qual lenda urbana famosa no Brasil?", o:["Kraken","Loira do Banheiro","Drácula","Múmia"], c:1 }
   ]
 };
 
-let perguntas = [];
-let atual = 0;
-let pontos = 0;
-let tempo = 15;
-let intervalo = null;
+let perguntas=[], atual=0, pontos=0;
+let tempoPadrao=15, tempo=15, intervalo=null;
+const app=document.getElementById("app");
 
 /* ===== TELAS ===== */
-const app = document.getElementById("app");
-
 function telaInicial(){
-  app.innerHTML = `
+  app.innerHTML=`
     <h1>Ghost Quiz 👻</h1>
     <p>Você ousa entrar nesta dimensão?</p>
     <button onclick="telaTempo()">Iniciar Quiz</button>
@@ -101,89 +83,84 @@ function telaInicial(){
 }
 
 function telaTempo(){
-  app.innerHTML = `
-    <h2>Escolha o tempo</h2>
+  app.innerHTML=`
+    <h1>Escolha o tempo</h1>
     <button onclick="definirTempo(15)">15 segundos</button>
+    <button onclick="definirTempo(20)">20 segundos</button>
     <button onclick="definirTempo(30)">30 segundos</button>
   `;
 }
 
 function definirTempo(t){
-  tempo = t;
-  telaTema();
+  tempoPadrao=t;
+  telaTemas();
 }
 
-function telaTema(){
-  app.innerHTML = `
-    <h2>Escolha o tema</h2>
-    <button onclick="selecionarTema('terror')">🔪 Terror</button>
+function telaTemas(){
+  app.innerHTML=`
+    <h1>Escolha o tema</h1>
+    <button onclick="selecionarTema('terror')">🔪 Terror Clássico</button>
+    <button onclick="selecionarTema('invocacao')">📖 Invocação do Mal</button>
     <button onclick="selecionarTema('lendas')">🌫️ Lendas Urbanas</button>
   `;
 }
 
 function selecionarTema(t){
-  perguntas = banco[t];
-  atual = 0;
-  pontos = 0;
-  carregarPergunta();
+  perguntas=[...banco[t]];
+  atual=0;
+  pontos=0;
+  carregar();
 }
 
 /* ===== QUIZ ===== */
-function carregarPergunta(){
-  clearInterval(intervalo);
-  let restante = tempo;
-
-  app.innerHTML = `
-    <h3>${perguntas[atual].q}</h3>
-    <p id="timer">⏱ ${restante}s</p>
-    ${perguntas[atual].o.map((op,i)=>
-      `<button onclick="responder(${i})">${op}</button>`
-    ).join("")}
-    <p id="feedback"></p>
+function carregar(){
+  tempo=tempoPadrao;
+  app.innerHTML=`
+    <div id="timerBar"></div>
+    <p>⏱️ <span id="tempo">${tempo}</span>s</p>
+    <p><b>${perguntas[atual].q}</b></p>
+    ${perguntas[atual].o.map((op,i)=>`<button onclick="responder(${i})">${op}</button>`).join("")}
+    <p id="fb"></p>
   `;
+  iniciarTempo();
+}
 
-  intervalo = setInterval(()=>{
-    restante--;
-    document.getElementById("timer").innerText = "⏱ " + restante + "s";
-
-    if(restante <= 0){
+function iniciarTempo(){
+  clearInterval(intervalo);
+  intervalo=setInterval(()=>{
+    tempo--;
+    document.getElementById("tempo").innerText=tempo;
+    document.getElementById("timerBar").style.width=(tempo/tempoPadrao*100)+"%";
+    if(tempo<=0){
       clearInterval(intervalo);
-      somErro();
-      document.getElementById("feedback").innerText = "⏰ Tempo esgotado!";
-      setTimeout(proximaPergunta, 800);
+      somErro.play().catch(()=>{});
+      proxima();
     }
   },1000);
 }
 
 function responder(i){
   clearInterval(intervalo);
-
-  if(i === perguntas[atual].c){
+  if(i===perguntas[atual].c){
     pontos++;
-    somAcerto();
-    document.getElementById("feedback").innerText = "✔ Correto!";
+    somAcerto.play().catch(()=>{});
+    document.getElementById("fb").innerText="Correto!";
   }else{
-    somErro();
-    document.getElementById("feedback").innerText = "✖ Errado!";
+    somErro.play().catch(()=>{});
+    document.getElementById("fb").innerText="Errado!";
   }
-
-  setTimeout(proximaPergunta, 800);
+  setTimeout(proxima,800);
 }
 
-function proximaPergunta(){
+function proxima(){
   atual++;
-  if(atual >= perguntas.length){
-    fimQuiz();
-  }else{
-    carregarPergunta();
-  }
+  atual>=perguntas.length ? fim() : carregar();
 }
 
-/* ===== FINAL ===== */
-function fimQuiz(){
-  app.innerHTML = `
-    <h2>Sua alma foi julgada… 👻</h2>
-    <p>Pontuação final: <b>${pontos}</b></p>
+function fim(){
+  app.innerHTML=`
+    <h1>Sua alma foi julgada 👻</h1>
+    <p>Pontuação: <b>${pontos}</b></p>
     <button onclick="telaInicial()">Jogar novamente</button>
   `;
 }
@@ -191,6 +168,5 @@ function fimQuiz(){
 /* START */
 telaInicial();
 </script>
-
 </body>
 </html>

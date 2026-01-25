@@ -1,10 +1,111 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Ghost Quiz</title>
+<meta charset="UTF-8">
+<title>Ghost Quiz 👻</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+  margin: 0;
+  background: #000;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.box {
+  width: 90%;
+  max-width: 420px;
+  background: #111;
+  border: 2px solid #900;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 0 20px #400;
+  text-align: center;
+}
+h1 { color: #ff2a2a; }
+button {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  background: #222;
+  color: #fff;
+  border: 1px solid #900;
+  border-radius: 8px;
+  font-size: 16px;
+}
+button:hover { background: #900; }
+#timer { margin: 10px 0; }
+</style>
 </head>
 <body>
-  <h1>Funcionou 👻</h1>
+
+<div class="box">
+  <h1>Ghost Quiz 👻</h1>
+  <div id="timer">⏱️ 15</div>
+  <p id="question"></p>
+  <div id="answers"></div>
+</div>
+
+<script>
+const perguntas = [
+  {
+    q: "Quem é o vilão de Halloween?",
+    a: ["Freddy Krueger","Jason Voorhees","Michael Myers","Chucky"],
+    c: 2
+  },
+  {
+    q: "Qual filme faz parte do universo Invocação do Mal?",
+    a: ["Jogos Mortais","Annabelle","O Iluminado","A Bruxa"],
+    c: 1
+  }
+];
+
+let atual = 0;
+let tempo = 15;
+let intervalo;
+
+function carregar() {
+  document.getElementById("question").innerText = perguntas[atual].q;
+  const div = document.getElementById("answers");
+  div.innerHTML = "";
+  perguntas[atual].a.forEach((txt,i)=>{
+    const b=document.createElement("button");
+    b.innerText=txt;
+    b.onclick=()=>responder(i);
+    div.appendChild(b);
+  });
+  iniciarTempo();
+}
+
+function responder(i){
+  clearInterval(intervalo);
+  atual++;
+  if(atual < perguntas.length){
+    carregar();
+  } else {
+    document.querySelector(".box").innerHTML =
+      "<h1>Fim do Quiz 👻</h1><p>Você sobreviveu.</p>";
+  }
+}
+
+function iniciarTempo(){
+  tempo = 15;
+  document.getElementById("timer").innerText = "⏱️ " + tempo;
+  intervalo = setInterval(()=>{
+    tempo--;
+    document.getElementById("timer").innerText = "⏱️ " + tempo;
+    if(tempo<=0){
+      clearInterval(intervalo);
+      responder(-1);
+    }
+  },1000);
+}
+
+carregar();
+</script>
+
 </body>
 </html>

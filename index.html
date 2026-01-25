@@ -64,15 +64,78 @@ const somErro   = new Audio("https://actions.google.com/sounds/v1/cartoon/boing.
 /* ===== BANCO ===== */
 const banco = {
   terror: [
-    {q:"Quem é o vilão de Halloween?", o:["Freddy Krueger","Jason Voorhees","Michael Myers","Chucky"], c:2}
+    {
+      q: "Quem é o vilão do filme Halloween?",
+      o: ["Freddy Krueger","Jason Voorhees","Michael Myers","Chucky"],
+      c: 2
+    },
+    {
+      q: "Qual assassino usa uma máscara de hóquei?",
+      o: ["Leatherface","Michael Myers","Jason Voorhees","Ghostface"],
+      c: 2
+    },
+    {
+      q: "Em Sexta-Feira 13, onde se passa a história?",
+      o: ["Crystal Lake","Silent Hill","Haddonfield","Elm Street"],
+      c: 0
+    },
+    {
+      q: "Qual vilão ataca as vítimas nos sonhos?",
+      o: ["Jason","Freddy Krueger","Chucky","Pennywise"],
+      c: 1
+    },
+    {
+      q: "Qual filme se passa em um hotel isolado?",
+      o: ["O Iluminado","O Exorcista","A Bruxa","O Chamado"],
+      c: 0
+    }
   ],
+
   invocacao: [
-    {q:"Qual filme faz parte do universo Invocação do Mal?", o:["Jogos Mortais","Annabelle","A Bruxa","O Iluminado"], c:1}
+    {
+      q: "Qual boneca faz parte do universo Invocação do Mal?",
+      o: ["Chucky","Annabelle","Billy","M3GAN"],
+      c: 1
+    },
+    {
+      q: "Quem são os investigadores paranormais do filme?",
+      o: ["Ed e Lorraine Warren","Mulder e Scully","Van Helsing","Padre Karras"],
+      c: 0
+    },
+    {
+      q: "Qual entidade aparece no filme A Freira?",
+      o: ["Valak","Pazuzu","Bagul","Baphomet"],
+      c: 0
+    },
+    {
+      q: "Qual filme do universo mostra um brinquedo amaldiçoado?",
+      o: ["A Freira","Invocação do Mal","Annabelle","O Exorcista"],
+      c: 2
+    }
   ],
+
   lendas: [
-    {q:"Qual lenda urbana é famosa em escolas?", o:["Loira do Banheiro","Kraken","Drácula","Múmia"], c:0}
-  ]
-};
+    {
+      q: "Qual lenda urbana aparece em banheiros escolares?",
+      o: ["Loira do Banheiro","Cuca","Mula-sem-cabeça","Iara"],
+      c: 0
+    },
+    {
+      q: "Qual criatura do folclore protege as florestas?",
+      o: ["Saci","Curupira","Boitatá","Boto"],
+      c: 1
+    },
+    {
+      q: "Qual lenda seduz pessoas nos rios?",
+      o: ["Iara","Cuca","Loira do Banheiro","Banshee"],
+      c: 0
+    },
+    {
+      q: "Qual criatura tem os pés virados para trás?",
+      o: ["Saci","Curupira","Cuca","Boitatá"],
+      c: 1
+    }
+  
 
 let perguntas=[], atual=0, pontos=0, tempo=15, intervalo=null;
 const app = document.getElementById("app");

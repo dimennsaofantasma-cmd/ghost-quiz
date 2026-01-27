@@ -3,17 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ghost Quiz 👻</title>
-
-<!-- Fonte estilo terror -->
-<link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
+<title>Ghost Quiz</title>
 
 <style>
+*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+
 body{
   margin:0;
   background:#000;
-  color:#ddd;
-  font-family: Arial, sans-serif;
+  color:#eee;
   display:flex;
   justify-content:center;
   align-items:center;
@@ -21,69 +19,53 @@ body{
 }
 
 #app{
-  width:90%;
+  width:92%;
   max-width:420px;
   background:#0b0b0b;
   border:2px solid #900;
-  border-radius:14px;
-  padding:22px;
-  box-shadow:0 0 25px #400;
-  text-align:center;
-  transition: border-color .3s;
+  border-radius:16px;
+  padding:20px;
+  box-shadow:0 0 30px #400;
+  transition:border-color .3s;
 }
 
-h1{
-  font-family:'Creepster', cursive;
-  color:#c00000;
-  font-size:42px;
-  margin-bottom:10px;
-}
+h1,h2{text-align:center;color:#c00}
 
-h2{
-  color:#e6e6e6;
-}
-
-p{
-  color:#bbb;
-}
+p{text-align:center}
 
 button{
   width:100%;
   padding:14px;
   margin:8px 0;
-  background:#1a1a1a;
+  background:#111;
   color:#eee;
   border:1px solid #700;
   border-radius:10px;
   font-size:16px;
 }
 
-button:hover{
-  background:#700;
-}
+button:hover{background:#700}
 
 #bar{
-  height:10px;
+  height:12px;
   background:#300;
   border-radius:6px;
   overflow:hidden;
-  margin:12px 0;
+  margin:14px 0;
 }
 
 #fill{
   height:100%;
   width:100%;
-  background:linear-gradient(90deg, #ff0000, #800000);
-  transition: width 1s linear;
+  background:linear-gradient(90deg,#ff0000,#800000);
+  transition:width 1s linear;
 }
 
 .feedback{
   font-weight:bold;
   margin-top:10px;
+  text-align:center;
 }
-
-.certo{ color:lime; }
-.errado{ color:red; }
 </style>
 </head>
 
@@ -91,51 +73,30 @@ button:hover{
 <div id="app"></div>
 
 <script>
-/* ===== BANCO ===== */
-const banco = {
-  lendas: [
-    { q:"Qual lenda urbana aparece em banheiros escolares?",
-      o:["Loira do Banheiro","Cuca","Mula-sem-cabeça","Iara"], c:0 },
-    { q:"Qual criatura protege as florestas?",
-      o:["Saci","Curupira","Boitatá","Boto"], c:1 },
-    { q:"Qual lenda seduz pessoas nos rios?",
-      o:["Iara","Cuca","Loira do Banheiro","Banshee"], c:0 },
-    { q:"Qual criatura tem os pés virados para trás?",
-      o:["Saci","Curupira","Cuca","Boitatá"], c:1 }
-  ]
-};
+const app = document.getElementById("app");
+let perguntas=[], atual=0, pontos=0;
+let tempo=15, intervalo;
 
-let perguntas=[], atual=0, pontos=0, tempo=15, intervalo=null;
-const app=document.getElementById("app");
+const banco = [
+ {q:"Quem é o vilão do filme Halloween?",o:["Freddy Krueger","Jason Voorhees","Michael Myers","Chucky"],c:2},
+ {q:"Qual assassino usa máscara de hóquei?",o:["Leatherface","Michael Myers","Jason Voorhees","Ghostface"],c:2},
+ {q:"Em Sexta-Feira 13, onde se passa a história?",o:["Silent Hill","Crystal Lake","Elm Street","Haddonfield"],c:1},
+ {q:"Qual vilão ataca nos sonhos?",o:["Jason","Chucky","Freddy Krueger","Ghostface"],c:2},
+ {q:"Qual filme começa com uma ligação misteriosa?",o:["Halloween","Scream","O Exorcista","Invocação do Mal"],c:1}
+];
 
-/* ===== TELAS ===== */
 function telaInicial(){
+  app.style.borderColor="#900";
   app.innerHTML=`
     <h1>Ghost Quiz 👻</h1>
-    <p>Você ousa entrar nesta dimensão?<br>Responda… ou perca sua alma.</p>
-    <button onclick="telaTempo()">Iniciar Quiz</button>
+    <p>Você ousa entrar nesta dimensão?<br>Responda... ou perca sua alma.</p>
+    <button onclick="iniciar()">Iniciar Quiz</button>
   `;
 }
 
-function telaTempo(){
-  app.innerHTML=`
-    <h2>Escolha o tempo</h2>
-    <button onclick="definirTempo(15)">15 segundos</button>
-    <button onclick="definirTempo(20)">20 segundos</button>
-    <button onclick="definirTempo(30)">30 segundos</button>
-  `;
-}
-
-function definirTempo(t){
-  tempo=t;
-  iniciar();
-}
-
-/* ===== QUIZ ===== */
 function iniciar(){
-  perguntas=[...banco.lendas];
-  atual=0;
-  pontos=0;
+  perguntas=[...banco];
+  atual=0; pontos=0;
   carregar();
 }
 
@@ -161,28 +122,29 @@ function iniciarTempo(){
     fill.style.width=(t/tempo*100)+"%";
     if(t<=0){
       clearInterval(intervalo);
-      erroVisual();
+      erro();
     }
   },1000);
 }
 
 function responder(i){
   clearInterval(intervalo);
-  i===perguntas[atual].c ? acertoVisual() : erroVisual();
+  if(i===perguntas[atual].c){
+    pontos++;
+    app.style.borderColor="lime";
+    feedback("✔ Acertou!","lime");
+  }else{
+    erro();
+  }
 }
 
-function acertoVisual(){
-  pontos++;
-  app.style.borderColor="lime";
-  app.insertAdjacentHTML("beforeend",
-    `<p class="feedback certo">✔ Acertou!</p>`);
-  setTimeout(proxima,800);
-}
-
-function erroVisual(){
+function erro(){
   app.style.borderColor="red";
-  app.insertAdjacentHTML("beforeend",
-    `<p class="feedback errado">✖ Errou!</p>`);
+  feedback("✖ Erro!","red");
+}
+
+function feedback(msg,cor){
+  app.insertAdjacentHTML("beforeend",`<div class="feedback" style="color:${cor}">${msg}</div>`);
   setTimeout(proxima,800);
 }
 
@@ -191,13 +153,23 @@ function proxima(){
   atual<perguntas.length ? carregar() : fim();
 }
 
-/* ===== FIM ===== */
 function fim(){
+  app.style.borderColor="#900";
   app.innerHTML=`
-    <h2>Sua alma foi julgada…</h2>
+    <h2>Sua alma foi julgada...</h2>
     <p>Pontuação final: <b>${pontos}</b></p>
+    <button onclick="compartilhar()">Compartilhar</button>
+    <button onclick="window.open('https://t.me/DimensaoFantasma','_blank')">Telegram</button>
     <button onclick="telaInicial()">Jogar novamente</button>
   `;
+}
+
+function compartilhar(){
+  navigator.share?.({
+    title:"Ghost Quiz",
+    text:`Fiz ${pontos} pontos no Ghost Quiz 👻`,
+    url:location.href
+  });
 }
 
 telaInicial();

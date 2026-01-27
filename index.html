@@ -25,7 +25,6 @@ body{
   padding:20px;
   box-shadow:0 0 20px #400;
   text-align:center;
-  transition: transform 0.15s;
 }
 h1{color:#ff2a2a;}
 
@@ -60,7 +59,6 @@ button:hover{background:#900;}
   background:#f00;
 }
 
-/* FEEDBACK */
 .feedback{
   padding:10px;
   border-radius:10px;
@@ -81,20 +79,24 @@ const banco = {
   terror: [
     {q:"Quem é o vilão do filme Halloween?", o:["Freddy","Jason","Michael Myers","Chucky"], c:2},
     {q:"Qual assassino usa máscara de hóquei?", o:["Leatherface","Michael","Jason","Ghostface"], c:2}
+  ],
+  lendas: [
+    {q:"Qual lenda aparece em banheiros escolares?", o:["Loira","Cuca","Iara","Banshee"], c:0},
+    {q:"Quem protege as florestas?", o:["Saci","Curupira","Boto","Cuca"], c:1}
   ]
 };
 
-let perguntas=[], atual=0, pontos=0, tempo=15, intervalo=null;
+let perguntas=[], atual=0, pontos=0, tempo=15, intervalo=null, tema="terror", embaralhar=false;
 const app=document.getElementById("app");
 
 /* ===== TELAS ===== */
 function telaInicial(){
   app.innerHTML=`
     <h1>Ghost Quiz 👻</h1>
-    <p>A dimensão se abre…</p>
     <button onclick="telaTempo()">Iniciar Quiz</button>
-    <button onclick="telaRanking()">Ver Ranking</button>
+    <button onclick="telaRanking()">Ranking</button>
     <button class="telegram" onclick="window.open('https://t.me/+ewlyVq2Rsno3NGMx','_blank')">Telegram</button>
+    <button onclick="window.open('https://docs.google.com/forms','_blank')">Sugerir Tema</button>
   `;
 }
 
@@ -109,12 +111,32 @@ function telaTempo(){
 
 function definirTempo(t){
   tempo=t;
+  telaTema();
+}
+
+function telaTema(){
+  app.innerHTML=`
+    <h2>Escolha o tema</h2>
+    <button onclick="definirTema('terror')">🔪 Terror</button>
+    <button onclick="definirTema('lendas')">🌫️ Lendas</button>
+    <button onclick="toggleEmbaralhar()">Embaralhar: ${embaralhar?"ON":"OFF"}</button>
+  `;
+}
+
+function definirTema(t){
+  tema=t;
   iniciar();
+}
+
+function toggleEmbaralhar(){
+  embaralhar=!embaralhar;
+  telaTema();
 }
 
 /* ===== QUIZ ===== */
 function iniciar(){
-  perguntas=[...banco.terror];
+  perguntas=[...banco[tema]];
+  if(embaralhar) perguntas.sort(()=>Math.random()-0.5);
   atual=0; pontos=0;
   carregar();
 }
@@ -157,15 +179,12 @@ function responder(i){
   setTimeout(proxima,800);
 }
 
-function mostrarAcerto(txt){
-  app.insertAdjacentHTML("beforeend", `<div class="feedback ok">${txt}</div>`);
+function mostrarAcerto(t){
+  app.insertAdjacentHTML("beforeend", `<div class="feedback ok">${t}</div>`);
 }
 
-function mostrarErro(txt){
-  app.insertAdjacentHTML("beforeend", `<div class="feedback err">${txt}</div>`);
-  app.style.transform="translateX(-5px)";
-  setTimeout(()=>app.style.transform="translateX(5px)",80);
-  setTimeout(()=>app.style.transform="translateX(0)",160);
+function mostrarErro(t){
+  app.insertAdjacentHTML("beforeend", `<div class="feedback err">${t}</div>`);
 }
 
 function proxima(){
@@ -176,19 +195,11 @@ function proxima(){
 /* ===== FIM + RANKING ===== */
 function fim(){
   const nome=prompt("Digite seu nome") || "Anônimo";
-  salvarRanking(nome,pontos);
-  app.innerHTML=`
-    <h2>Sua alma foi julgada…</h2>
-    <p>Pontos finais: <b>${pontos}</b></p>
-    <button onclick="telaInicial()">Voltar</button>
-  `;
-}
-
-function salvarRanking(nome,p){
   let r=JSON.parse(localStorage.getItem("ranking")||"[]");
-  r.push({nome,p});
+  r.push({nome,p:pontos});
   r.sort((a,b)=>b.p-a.p);
   localStorage.setItem("ranking",JSON.stringify(r.slice(0,10)));
+  telaRanking();
 }
 
 function telaRanking(){

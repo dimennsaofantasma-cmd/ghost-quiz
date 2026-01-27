@@ -3,69 +3,66 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ghost Quiz</title>
+<title>Ghost Quiz 👻</title>
 
 <style>
-*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
-
 body{
   margin:0;
   background:#000;
-  color:#eee;
+  color:#fff;
+  font-family:Arial, sans-serif;
   display:flex;
   justify-content:center;
   align-items:center;
   min-height:100vh;
 }
-
 #app{
-  width:92%;
+  width:90%;
   max-width:420px;
-  background:#0b0b0b;
+  background:#111;
   border:2px solid #900;
-  border-radius:16px;
+  border-radius:12px;
   padding:20px;
-  box-shadow:0 0 30px #400;
-  transition:border-color .3s;
+  box-shadow:0 0 20px #400;
+  text-align:center;
+  transition: transform 0.15s;
 }
-
-h1,h2{text-align:center;color:#c00}
-
-p{text-align:center}
+h1{color:#ff2a2a;}
 
 button{
   width:100%;
-  padding:14px;
+  padding:12px;
   margin:8px 0;
-  background:#111;
-  color:#eee;
-  border:1px solid #700;
-  border-radius:10px;
+  background:#222;
+  color:#fff;
+  border:1px solid #900;
+  border-radius:8px;
   font-size:16px;
 }
-
-button:hover{background:#700}
+button:hover{background:#900;}
 
 #bar{
-  height:12px;
-  background:#300;
+  height:8px;
+  background:#400;
   border-radius:6px;
   overflow:hidden;
-  margin:14px 0;
+  margin:10px 0;
 }
-
 #fill{
   height:100%;
   width:100%;
-  background:linear-gradient(90deg,#ff0000,#800000);
-  transition:width 1s linear;
+  background:#f00;
 }
 
+/* FEEDBACK */
 .feedback{
+  padding:10px;
+  border-radius:10px;
+  margin:10px 0;
   font-weight:bold;
-  margin-top:10px;
-  text-align:center;
 }
+.ok{background:#0a3; color:#000;}
+.err{background:#900; color:#fff;}
 </style>
 </head>
 
@@ -73,36 +70,49 @@ button:hover{background:#700}
 <div id="app"></div>
 
 <script>
-const app = document.getElementById("app");
-let perguntas=[], atual=0, pontos=0;
-let tempo=15, intervalo;
+/* ===== BANCO ===== */
+const banco = {
+  terror: [
+    {q:"Quem é o vilão do filme Halloween?", o:["Freddy","Jason","Michael Myers","Chucky"], c:2},
+    {q:"Qual assassino usa máscara de hóquei?", o:["Leatherface","Michael","Jason","Ghostface"], c:2}
+  ]
+};
 
-const banco = [
- {q:"Quem é o vilão do filme Halloween?",o:["Freddy Krueger","Jason Voorhees","Michael Myers","Chucky"],c:2},
- {q:"Qual assassino usa máscara de hóquei?",o:["Leatherface","Michael Myers","Jason Voorhees","Ghostface"],c:2},
- {q:"Em Sexta-Feira 13, onde se passa a história?",o:["Silent Hill","Crystal Lake","Elm Street","Haddonfield"],c:1},
- {q:"Qual vilão ataca nos sonhos?",o:["Jason","Chucky","Freddy Krueger","Ghostface"],c:2},
- {q:"Qual filme começa com uma ligação misteriosa?",o:["Halloween","Scream","O Exorcista","Invocação do Mal"],c:1}
-];
+let perguntas=[], atual=0, pontos=0, tempo=15, intervalo=null;
+const app=document.getElementById("app");
 
+/* ===== TELAS ===== */
 function telaInicial(){
-  app.style.borderColor="#900";
   app.innerHTML=`
     <h1>Ghost Quiz 👻</h1>
-    <p>Você ousa entrar nesta dimensão?<br>Responda... ou perca sua alma.</p>
-    <button onclick="iniciar()">Iniciar Quiz</button>
+    <p>A dimensão se abre…</p>
+    <button onclick="telaTempo()">Iniciar Quiz</button>
   `;
 }
 
+function telaTempo(){
+  app.innerHTML=`
+    <h2>Tempo por pergunta</h2>
+    <button onclick="definirTempo(15)">15s</button>
+    <button onclick="definirTempo(20)">20s</button>
+    <button onclick="definirTempo(30)">30s</button>
+  `;
+}
+
+function definirTempo(t){
+  tempo=t;
+  iniciar();
+}
+
+/* ===== QUIZ ===== */
 function iniciar(){
-  perguntas=[...banco];
+  perguntas=[...banco.terror];
   atual=0; pontos=0;
   carregar();
 }
 
 function carregar(){
   const p=perguntas[atual];
-  app.style.borderColor="#900";
   app.innerHTML=`
     <h2>${p.q}</h2>
     <div id="bar"><div id="fill"></div></div>
@@ -122,7 +132,8 @@ function iniciarTempo(){
     fill.style.width=(t/tempo*100)+"%";
     if(t<=0){
       clearInterval(intervalo);
-      erro();
+      mostrarErro("Tempo esgotado!");
+      setTimeout(proxima,800);
     }
   },1000);
 }
@@ -131,21 +142,22 @@ function responder(i){
   clearInterval(intervalo);
   if(i===perguntas[atual].c){
     pontos++;
-    app.style.borderColor="lime";
-    feedback("✔ Acertou!","lime");
+    mostrarAcerto("Resposta correta!");
   }else{
-    erro();
+    mostrarErro("Resposta errada!");
   }
-}
-
-function erro(){
-  app.style.borderColor="red";
-  feedback("✖ Erro!","red");
-}
-
-function feedback(msg,cor){
-  app.insertAdjacentHTML("beforeend",`<div class="feedback" style="color:${cor}">${msg}</div>`);
   setTimeout(proxima,800);
+}
+
+function mostrarAcerto(txt){
+  app.insertAdjacentHTML("beforeend", `<div class="feedback ok">${txt}</div>`);
+}
+
+function mostrarErro(txt){
+  app.insertAdjacentHTML("beforeend", `<div class="feedback err">${txt}</div>`);
+  app.style.transform="translateX(-5px)";
+  setTimeout(()=>app.style.transform="translateX(5px)",80);
+  setTimeout(()=>app.style.transform="translateX(0)",160);
 }
 
 function proxima(){
@@ -154,22 +166,11 @@ function proxima(){
 }
 
 function fim(){
-  app.style.borderColor="#900";
   app.innerHTML=`
-    <h2>Sua alma foi julgada...</h2>
-    <p>Pontuação final: <b>${pontos}</b></p>
-    <button onclick="compartilhar()">Compartilhar</button>
-    <button onclick="window.open('https://t.me/DimensaoFantasma','_blank')">Telegram</button>
+    <h2>Sua alma foi julgada…</h2>
+    <p>Pontos finais: <b>${pontos}</b></p>
     <button onclick="telaInicial()">Jogar novamente</button>
   `;
-}
-
-function compartilhar(){
-  navigator.share?.({
-    title:"Ghost Quiz",
-    text:`Fiz ${pontos} pontos no Ghost Quiz 👻`,
-    url:location.href
-  });
 }
 
 telaInicial();

@@ -41,6 +41,12 @@ button{
 }
 button:hover{background:#900;}
 
+.telegram{
+  background:#0088cc;
+  border-color:#0088cc;
+}
+.telegram:hover{background:#0077b3;}
+
 #bar{
   height:8px;
   background:#400;
@@ -87,6 +93,8 @@ function telaInicial(){
     <h1>Ghost Quiz 👻</h1>
     <p>A dimensão se abre…</p>
     <button onclick="telaTempo()">Iniciar Quiz</button>
+    <button onclick="telaRanking()">Ver Ranking</button>
+    <button class="telegram" onclick="window.open('https://t.me/+ewlyVq2Rsno3NGMx','_blank')">Telegram</button>
   `;
 }
 
@@ -165,11 +173,30 @@ function proxima(){
   atual<perguntas.length ? carregar() : fim();
 }
 
+/* ===== FIM + RANKING ===== */
 function fim(){
+  const nome=prompt("Digite seu nome") || "Anônimo";
+  salvarRanking(nome,pontos);
   app.innerHTML=`
     <h2>Sua alma foi julgada…</h2>
     <p>Pontos finais: <b>${pontos}</b></p>
-    <button onclick="telaInicial()">Jogar novamente</button>
+    <button onclick="telaInicial()">Voltar</button>
+  `;
+}
+
+function salvarRanking(nome,p){
+  let r=JSON.parse(localStorage.getItem("ranking")||"[]");
+  r.push({nome,p});
+  r.sort((a,b)=>b.p-a.p);
+  localStorage.setItem("ranking",JSON.stringify(r.slice(0,10)));
+}
+
+function telaRanking(){
+  const r=JSON.parse(localStorage.getItem("ranking")||"[]");
+  app.innerHTML=`
+    <h2>Ranking Fantasma</h2>
+    ${r.map((x,i)=>`<p>${i+1}. ${x.nome} — ${x.p}</p>`).join("")}
+    <button onclick="telaInicial()">Voltar</button>
   `;
 }
 

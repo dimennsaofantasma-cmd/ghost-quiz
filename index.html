@@ -5,37 +5,62 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ghost Quiz 👻</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Nosifer&family=Creepster&display=swap" rel="stylesheet">
+
 <style>
 body{
   margin:0;
   background:#000;
-  color:#fff;
-  font-family:Arial, sans-serif;
+  color:#ffdddd;
+  font-family:'Creepster', cursive;
   display:flex;
   justify-content:center;
   align-items:center;
   min-height:100vh;
+  overflow:hidden;
 }
+
+/* NEVOA */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:url("https://i.imgur.com/8KZQZ6G.png");
+  opacity:0.15;
+  animation:fog 60s linear infinite;
+  pointer-events:none;
+}
+@keyframes fog{
+  from{background-position:0 0;}
+  to{background-position:1000px 0;}
+}
+
 #app{
   width:90%;
   max-width:420px;
-  background:#111;
-  border:2px solid #900;
-  border-radius:12px;
+  background:rgba(10,0,0,0.85);
+  border:2px solid #700;
+  border-radius:14px;
   padding:20px;
-  box-shadow:0 0 20px #400;
+  box-shadow:0 0 40px #400;
   text-align:center;
+  position:relative;
 }
-h1{color:#ff2a2a;}
+
+h1{
+  font-family:'Nosifer', cursive;
+  color:#ff0000;
+  font-size:32px;
+}
 
 button{
   width:100%;
   padding:12px;
   margin:8px 0;
-  background:#222;
+  background:#220000;
   color:#fff;
   border:1px solid #900;
-  border-radius:8px;
+  border-radius:10px;
   font-size:16px;
 }
 button:hover{background:#900;}
@@ -46,27 +71,34 @@ button:hover{background:#900;}
 }
 .telegram:hover{background:#0077b3;}
 
+/* BARRA DE SANGUE */
 #bar{
-  height:8px;
-  background:#400;
-  border-radius:6px;
+  height:12px;
+  background:#330000;
+  border-radius:8px;
   overflow:hidden;
-  margin:10px 0;
+  margin:12px 0;
 }
 #fill{
   height:100%;
   width:100%;
-  background:#f00;
+  background:linear-gradient(#ff0000,#660000);
+  animation:drip 1.5s infinite linear;
+}
+@keyframes drip{
+  0%{background-position:0 0;}
+  100%{background-position:0 40px;}
 }
 
+/* FEEDBACK */
 .feedback{
   padding:10px;
-  border-radius:10px;
+  border-radius:12px;
   margin:10px 0;
   font-weight:bold;
 }
-.ok{background:#0a3; color:#000;}
-.err{background:#900; color:#fff;}
+.ok{background:#0a3;color:#000;}
+.err{background:#900;color:#fff;}
 </style>
 </head>
 
@@ -76,24 +108,25 @@ button:hover{background:#900;}
 <script>
 /* ===== BANCO ===== */
 const banco = {
-  terror: [
-    {q:"Quem é o vilão do filme Halloween?", o:["Freddy","Jason","Michael Myers","Chucky"], c:2},
-    {q:"Qual assassino usa máscara de hóquei?", o:["Leatherface","Michael","Jason","Ghostface"], c:2}
+  terror:[
+    {q:"Quem é o vilão do filme Halloween?",o:["Freddy","Jason","Michael Myers","Chucky"],c:2},
+    {q:"Qual assassino usa máscara de hóquei?",o:["Leatherface","Michael","Jason","Ghostface"],c:2}
   ],
-  lendas: [
-    {q:"Qual lenda aparece em banheiros escolares?", o:["Loira","Cuca","Iara","Banshee"], c:0},
-    {q:"Quem protege as florestas?", o:["Saci","Curupira","Boto","Cuca"], c:1}
+  lendas:[
+    {q:"Qual lenda aparece em banheiros?",o:["Loira","Cuca","Iara","Banshee"],c:0},
+    {q:"Quem protege a floresta?",o:["Saci","Curupira","Boto","Cuca"],c:1}
   ]
 };
 
-let perguntas=[], atual=0, pontos=0, tempo=15, intervalo=null, tema="terror", embaralhar=false;
+let perguntas=[],atual=0,pontos=0,tempo=15,intervalo=null,tema="terror",embaralhar=false;
 const app=document.getElementById("app");
 
-/* ===== TELAS ===== */
+/* TELAS */
 function telaInicial(){
   app.innerHTML=`
-    <h1>Ghost Quiz 👻</h1>
-    <button onclick="telaTempo()">Iniciar Quiz</button>
+    <h1>Ghost Quiz</h1>
+    <p>A dimensão se abre…</p>
+    <button onclick="telaTempo()">Iniciar</button>
     <button onclick="telaRanking()">Ranking</button>
     <button class="telegram" onclick="window.open('https://t.me/+ewlyVq2Rsno3NGMx','_blank')">Telegram</button>
     <button onclick="window.open('https://docs.google.com/forms','_blank')">Sugerir Tema</button>
@@ -133,11 +166,11 @@ function toggleEmbaralhar(){
   telaTema();
 }
 
-/* ===== QUIZ ===== */
+/* QUIZ */
 function iniciar(){
   perguntas=[...banco[tema]];
   if(embaralhar) perguntas.sort(()=>Math.random()-0.5);
-  atual=0; pontos=0;
+  atual=0;pontos=0;
   carregar();
 }
 
@@ -162,8 +195,8 @@ function iniciarTempo(){
     fill.style.width=(t/tempo*100)+"%";
     if(t<=0){
       clearInterval(intervalo);
-      mostrarErro("Tempo esgotado!");
-      setTimeout(proxima,800);
+      mostrarErro("O tempo acabou…");
+      setTimeout(proxima,900);
     }
   },1000);
 }
@@ -172,29 +205,28 @@ function responder(i){
   clearInterval(intervalo);
   if(i===perguntas[atual].c){
     pontos++;
-    mostrarAcerto("Resposta correta!");
+    mostrarAcerto("Você sobreviveu!");
   }else{
     mostrarErro("Resposta errada!");
   }
-  setTimeout(proxima,800);
+  setTimeout(proxima,900);
 }
 
 function mostrarAcerto(t){
-  app.insertAdjacentHTML("beforeend", `<div class="feedback ok">${t}</div>`);
+  app.insertAdjacentHTML("beforeend",`<div class="feedback ok">${t}</div>`);
 }
-
 function mostrarErro(t){
-  app.insertAdjacentHTML("beforeend", `<div class="feedback err">${t}</div>`);
+  app.insertAdjacentHTML("beforeend",`<div class="feedback err">${t}</div>`);
 }
 
 function proxima(){
   atual++;
-  atual<perguntas.length ? carregar() : fim();
+  atual<perguntas.length?carregar():fim();
 }
 
-/* ===== FIM + RANKING ===== */
+/* FIM + RANKING */
 function fim(){
-  const nome=prompt("Digite seu nome") || "Anônimo";
+  const nome=prompt("Seu nome")||"Anônimo";
   let r=JSON.parse(localStorage.getItem("ranking")||"[]");
   r.push({nome,p:pontos});
   r.sort((a,b)=>b.p-a.p);

@@ -55,7 +55,19 @@
     .btn:hover {
       background: #a00000;
     }
+/* Tremida sombria do botão */
+@keyframes tremor {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-2px); }
+  40% { transform: translateX(2px); }
+  60% { transform: translateX(-2px); }
+  80% { transform: translateX(2px); }
+  100% { transform: translateX(0); }
+}
 
+.shake {
+  animation: tremor 0.4s ease-in-out 2;
+}
     footer {
       text-align: center;
       margin-top: 40px;

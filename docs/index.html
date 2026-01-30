@@ -9,136 +9,79 @@
       background: #0b0b0b;
       color: #e6e6e6;
       font-family: Georgia, serif;
-      margin: 0;
-      padding: 20px;
-    }
-
-    header {
       text-align: center;
-      margin-bottom: 40px;
+      padding: 40px;
     }
 
     h1 {
-      font-size: 2.6em;
-      margin-bottom: 10px;
-    }
-
-    main {
-      max-width: 700px;
-      margin: 0 auto;
-    }
-
-    .card {
-      background: #151515;
-      border-left: 4px solid #555;
-      padding: 20px;
-      margin-bottom: 25px;
-      border-radius: 6px;
-    }
-
-    .card.danger {
-      border-left-color: darkred;
-      box-shadow: 0 0 10px rgba(139,0,0,0.6);
+      color: darkred;
+      margin-bottom: 20px;
     }
 
     .btn {
       display: inline-block;
-      margin-top: 15px;
-      padding: 12px 18px;
+      margin-top: 25px;
+      padding: 14px 22px;
       background: darkred;
       color: white;
       text-decoration: none;
       font-weight: bold;
       border-radius: 6px;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .btn:hover {
-.btn {
-  -webkit-tap-highlight-color: transparent;
-}
-.btn {
-  -webkit-tap-highlight-color: transparent;
-}
       background: #a00000;
     }
-/* Tremida sombria do botão */
-@keyframes tremor {
-  0% { transform: translateX(0); }
-  20% { transform: translateX(-2px); }
-  40% { transform: translateX(2px); }
-  60% { transform: translateX(-2px); }
-  80% { transform: translateX(2px); }
-  100% { transform: translateX(0); }
-}
 
-.shake {
-  animation: tremor 0.4s ease-in-out 2;
-}
-    footer {
-      text-align: center;
-      margin-top: 40px;
-      font-size: 0.9em;
-      color: #777;
+    @keyframes tremor {
+      0% { transform: translateX(0); }
+      20% { transform: translateX(-3px); }
+      40% { transform: translateX(3px); }
+      60% { transform: translateX(-3px); }
+      80% { transform: translateX(3px); }
+      100% { transform: translateX(0); }
+    }
+
+    .shake {
+      animation: tremor 0.8s ease-in-out;
+    }
+
+    #destino {
+      display: none;
+      margin-top: 18px;
+      color: #ff4444;
+      font-style: italic;
     }
   </style>
 </head>
 
 <body>
 
-  <header>
-    <h1>Dimensão Fantasma</h1>
-    <p>Mistérios, enigmas e desafios além da realidade</p>
-  </header>
+  <h1>💀 Dimensão Fantasma 💀</h1>
 
-  <main>
+  <a href="quiz-inicial.html" class="btn" id="quizBtn">
+    👉 Entrar no Ghost Quiz
+  </a>
 
-    <div class="card">
-      <h2>👻 Bem-vindo</h2>
-      <p>
-        Você entrou na Dimensão Fantasma.  
-        Aqui, cada escolha pode revelar um mistério… ou algo pior.
-      </p>
-      <p>
-        Entre por sua conta e risco.
-      </p>
-    </div>
+  <p id="destino">O seu destino foi traçado…</p>
 
-    <div class="card danger">
-      <h2>🩸 Ghost Quiz</h2>
-      <p>
-        Teste sua coragem e conhecimento em nosso quiz macabro.
-      </p>
+  <script>
+    const btn = document.getElementById("quizBtn");
+    const destino = document.getElementById("destino");
 
-      <a href="quiz-inicial.html" class="btn" id="quizBtn">
-👉 Entrar no Ghost Quiz
-</a>
-
-<p id="destino" style="display:none; margin-top:15px; color:#ff4444; font-style:italic;">
-O seu destino foi traçado…
-</p>
-    </div>
-
-  </main>
-
-  <footer>
-    © Dimensão Fantasma — Todos os direitos reservados
-  </footer>
-<script>
-  const btn = document.getElementById("quizBtn");
-  const destino = document.getElementById("destino");
-
-  if (btn) {
     btn.addEventListener("click", function (e) {
       e.preventDefault();
 
+      btn.classList.add("shake");
       btn.style.pointerEvents = "none";
       destino.style.display = "block";
 
       setTimeout(() => {
         window.location.href = "quiz-inicial.html";
-      }, 1200);
+      }, 1500);
     });
-  }
-</script>
+  </script>
+
 </body>
 </html>

@@ -1,233 +1,85 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ghost Quiz 👻</title>
+  <meta charset="UTF-8">
+  <title>Dimensão Fantasma</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Creepster&display=swap');
+  <style>
+    body {
+      background: #000;
+      color: #eee;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
 
-body{
-  margin:0;
-  background:#000;
-  color:#eee;
-  font-family:Arial, sans-serif;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  min-height:100vh;
-}
-#app{
-  width:92%;
-  max-width:420px;
-  background:#111;
-  border:2px solid #900;
-  border-radius:14px;
-  padding:20px;
-  box-shadow:0 0 25px #400;
-  text-align:center;
-}
-h1,h2{
-  font-family:'Creepster', cursive;
-  color:#ff2a2a;
-}
-button{
-  width:100%;
-  padding:12px;
-  margin:8px 0;
-  background:#222;
-  color:#fff;
-  border:1px solid #900;
-  border-radius:10px;
-  font-size:16px;
-}
-button:hover{background:#900}
-#bar{
-  height:10px;
-  background:#400;
-  border-radius:8px;
-  overflow:hidden;
-  margin:10px 0;
-}
-#fill{
-  height:100%;
-  width:100%;
-  background:linear-gradient(#900,#f00);
-}
-#timer{
-  font-size:18px;
-  color:#ff8080;
-}
-.telegram{
-  background:#0088cc;
-  border:none;
-}
-.feedback-ok{box-shadow:0 0 20px #0f0}
-.feedback-erro{box-shadow:0 0 20px #f00}
-</style>
+    header {
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    h1 {
+      color: #b30000;
+      text-shadow: 0 0 10px #500;
+    }
+
+    main {
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: #111;
+      border-left: 4px solid #600;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .danger {
+      border-left-color: #b30000;
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 12px 18px;
+      background: #8b0000;
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      border-radius: 6px;
+      box-shadow: 0 0 10px rgba(139,0,0,0.6);
+    }
+  </style>
 </head>
 
 <body>
-<div id="app"></div>
 
-<script>
-/* ===== SONS (limitados pelo navegador) ===== */
-const somAcerto = new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg");
+  <header>
+    <h1>Dimensão Fantasma</h1>
+    <p>Bem-vindo ao lugar onde o medo observa você.</p>
+  </header>
 
-/* ===== BANCO DE PERGUNTAS ===== */
-const banco = {
-  terror:[
-    {q:"Quem é o vilão de Halloween?",o:["Jason","Freddy","Michael Myers","Chucky"],c:2},
-    {q:"Quem usa máscara de hóquei?",o:["Leatherface","Jason","Ghostface","Michael"],c:1},
-    {q:"Onde se passa Sexta-Feira 13?",o:["Elm Street","Crystal Lake","Haddonfield","Silent Hill"],c:1}
-  ],
-  lendas:[
-    {q:"Lenda urbana dos banheiros?",o:["Iara","Loira do Banheiro","Cuca","Banshee"],c:1},
-    {q:"Criatura com pés virados?",o:["Saci","Curupira","Boitatá","Cuca"],c:1}
-  ]
-};
+  <main>
+    <div class="card">
+      <h2>👻 Aviso</h2>
+      <p>
+        Nem tudo que está aqui deveria ser encontrado.
+        Prossiga por sua conta e risco.
+      </p>
+    </div>
 
-let perguntas=[],atual=0,pontos=0,tempo=15,intervalo;
-const app=document.getElementById("app");
+    <div class="card danger">
+      <h2>🩸 Ghost Quiz</h2>
+      <p>Você tem coragem de enfrentar o desafio?</p>
 
-/* ===== TELAS ===== */
-function telaInicial(){
-  app.innerHTML=`
-    <h1>Ghost Quiz 👻</h1>
-    <p>Como ousas entrar nesta dimensão?</p>
-    <button onclick="telaTempo()">Iniciar</button>
-    <button class="telegram" onclick="window.open('https://t.me/dimensao_fantasma','_blank')">Telegram</button>
-  `;
-}
+      <a href="quiz inicial.html" class="btn">
+        👉 Entrar no Ghost Quiz
+      </a>
+    </div>
+  </main>
 
-function telaTempo(){
-  app.innerHTML=`
-    <h2>Tempo por pergunta</h2>
-    <button onclick="definirTempo(15)">15s</button>
-    <button onclick="definirTempo(20)">20s</button>
-    <button onclick="definirTempo(30)">30s</button>
-  `;
-}
-
-function definirTempo(t){
-  tempo=t;
-  telaTema();
-}
-
-function telaTema(){
-  app.innerHTML=`
-    <h2>Escolha o Tema</h2>
-    <button onclick="iniciar('terror')">🔪 Terror</button>
-    <button onclick="iniciar('lendas')">🌫️ Lendas Urbanas</button>
-    <button onclick="window.open('https://docs.google.com/forms','_blank')">Sugerir Tema</button>
-  `;
-}
-
-/* ===== QUIZ ===== */
-function iniciar(tema){
-  perguntas=[...banco[tema]].sort(()=>Math.random()-0.5);
-  atual=0;pontos=0;
-  carregar();
-}
-
-function carregar(){
-  const p=perguntas[atual];
-  app.innerHTML=`
-    <div id="timer">⏳ ${tempo}</div>
-    <h2>${p.q}</h2>
-    <div id="bar"><div id="fill"></div></div>
-    ${p.o.map((op,i)=>`<button onclick="responder(${i})">${op}</button>`).join("")}
-    <p>Pontos: ${pontos}</p>
-  `;
-  iniciarTempo();
-}
-
-function iniciarTempo(){
-  let t=tempo;
-  const fill=document.getElementById("fill");
-  const timer=document.getElementById("timer");
-  fill.style.width="100%";
-  clearInterval(intervalo);
-  intervalo=setInterval(()=>{
-    t--;
-    timer.textContent="⏳ "+t;
-    fill.style.width=(t/tempo*100)+"%";
-    if(t<=0){
-      clearInterval(intervalo);
-      proxima();
-    }
-  },1000);
-}
-
-function responder(i){
-  clearInterval(intervalo);
-  if(i===perguntas[atual].c){
-    pontos++;
-    somAcerto.play().catch(()=>{});
-    app.className="feedback-ok";
-  }else{
-    app.className="feedback-erro";
-  }
-  setTimeout(()=>{
-    app.className="";
-    proxima();
-  },600);
-}
-
-function proxima(){
-  atual++;
-  atual<perguntas.length?carregar():fim();
-}
-
-/* ===== FIM ===== */
-function fim(){
-  app.innerHTML=`
-    <h2>Sua alma foi julgada…</h2>
-    <p>Pontuação: <b>${pontos}</b></p>
-    <button onclick="copiar()">Copiar Resultado</button>
-    <button onclick="compartilhar()">Compartilhar</button>
-    <button onclick="telaRanking()">Ranking</button>
-    <button onclick="telaInicial()">Voltar</button>
-  `;
-  salvarRanking();
-}
-
-function salvarRanking(){
-  let r=JSON.parse(localStorage.getItem("ranking")||"[]");
-  r.push({pontos});
-  localStorage.setItem("ranking",JSON.stringify(r));
-}
-
-function telaRanking(){
-  const r=JSON.parse(localStorage.getItem("ranking")||"[]");
-  app.innerHTML=`
-    <h2>Ranking</h2>
-    ${r.map((x,i)=>`<p>#${i+1} — ${x.pontos} pts</p>`).join("")}
-    <button onclick="telaInicial()">Voltar</button>
-  `;
-}
-
-function copiar(){
-  navigator.clipboard.writeText(
-    `Joguei o Ghost Quiz 👻 e fiz ${pontos} pontos!\n${location.href}`
-  );
-  alert("Copiado!");
-}
-
-function compartilhar(){
-  if(navigator.share){
-    navigator.share({
-      title:"Ghost Quiz 👻",
-      text:`Fiz ${pontos} pontos!`,
-      url:location.href
-    });
-  }else{
-    copiar();
-  }
-}
-
-telaInicial();
-</script>
 </body>
 </html>

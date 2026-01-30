@@ -105,6 +105,22 @@ O seu destino foi traçado…
   <footer>
     © Dimensão Fantasma — Todos os direitos reservados
   </footer>
+<script>
+  const btn = document.getElementById("quizBtn");
+  const destino = document.getElementById("destino");
 
+  if (btn) {
+    btn.addEventListener("click", function (e) {
+      e.preventDefault();
+
+      btn.style.pointerEvents = "none";
+      destino.style.display = "block";
+
+      setTimeout(() => {
+        window.location.href = "quiz-inicial.html";
+      }, 1200);
+    });
+  }
+</script>
 </body>
 </html>

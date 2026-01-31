@@ -96,6 +96,34 @@
   <footer>
     © Dimensão Fantasma — Todos os direitos reservados
   </footer>
+<script>
+  const btn = document.querySelector('.btn');
 
+  if (btn) {
+    // cria a frase oculta
+    const destino = document.createElement('p');
+    destino.textContent = 'O seu destino foi traçado…';
+    destino.style.display = 'none';
+    destino.style.marginTop = '15px';
+    destino.style.color = '#ff4444';
+    destino.style.fontStyle = 'italic';
+    btn.after(destino);
+
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+
+      // mostra a frase
+      destino.style.display = 'block';
+
+      // efeito de tremida
+      btn.style.animation = 'tremor 0.6s ease-in-out';
+
+      // redireciona após o efeito
+      setTimeout(() => {
+        window.location.href = btn.getAttribute('href');
+      }, 900);
+    });
+  }
+</script>
 </body>
 </html>

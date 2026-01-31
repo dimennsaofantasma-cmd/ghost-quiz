@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Maratona Fantasma</title>
+  <title>Dimensão Fantasma</title>
 
   <style>
     body {
@@ -15,61 +15,66 @@
 
     header {
       text-align: center;
-      margin-bottom: 50px;
+      margin-bottom: 40px;
     }
 
     h1 {
-      color: #b30000;
-      font-size: 2.8em;
+      font-size: 2.6em;
       margin-bottom: 10px;
-      text-shadow: 0 0 8px #400000;
-    }
-
-    h2 {
-      color: #ff6666;
-      font-weight: normal;
-      font-size: 1.2em;
-      margin-top: 0;
     }
 
     main {
-      max-width: 800px;
+      max-width: 700px;
       margin: 0 auto;
     }
 
     .card {
       background: #151515;
-      border-left: 4px solid darkred;
+      border-left: 4px solid #555;
       padding: 20px;
-      border-radius: 6px;
       margin-bottom: 25px;
-      box-shadow: 0 0 10px rgba(139,0,0,0.4);
+      border-radius: 6px;
     }
 
-    ul {
-      list-style: "🩸 ";
-      padding-left: 20px;
+    .card.danger {
+      border-left-color: darkred;
+      box-shadow: 0 0 10px rgba(139,0,0,0.6);
     }
 
-    li {
-      margin-bottom: 10px;
+    .btn {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 12px 18px;
+      background: darkred;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      border-radius: 6px;
+    }
+
+    .btn:hover {
+      background: #a00000;
+    }
+
+    /* Tremida do botão */
+    @keyframes tremor {
+      0% { transform: translateX(0); }
+      20% { transform: translateX(-2px); }
+      40% { transform: translateX(2px); }
+      60% { transform: translateX(-2px); }
+      80% { transform: translateX(2px); }
+      100% { transform: translateX(0); }
+    }
+
+    .shake {
+      animation: tremor 0.4s ease-in-out 2;
     }
 
     footer {
       text-align: center;
-      margin-top: 50px;
+      margin-top: 40px;
       font-size: 0.9em;
       color: #777;
-    }
-
-    a {
-      color: #ff4444;
-      text-decoration: none;
-      font-weight: bold;
-    }
-
-    a:hover {
-      text-decoration: underline;
     }
   </style>
 </head>
@@ -77,47 +82,75 @@
 <body>
 
   <header>
-    <h1>🩸 Maratona Fantasma</h1>
-    <h2>Uma seleção de filmes de terror e suspense para atravessar a noite</h2>
+    <h1>Dimensão Fantasma</h1>
+    <p>Mistérios, enigmas e desafios além da realidade</p>
   </header>
 
   <main>
+
     <div class="card">
+      <h2>👻 Bem-vindo</h2>
       <p>
-        Bem-vindo à <strong>Maratona Fantasma</strong>.  
-        Aqui você encontra uma curadoria sombria de filmes de terror e suspense,
-        organizada para quem tem coragem de ir até o fim.
+        Você entrou na Dimensão Fantasma.
+        Aqui, cada escolha pode revelar um mistério…
+        ou algo pior.
       </p>
       <p>
-        Apague as luzes. Coloque os fones.  
-        A maratona começa agora.
+        Entre por sua conta e risco.
+      </p>
+    </div>
+
+    <div class="card danger">
+      <h2>🩸 Ghost Quiz</h2>
+      <p>
+        Teste sua coragem e conhecimento em nosso quiz macabro.
+      </p>
+
+      <a href="quiz-inicial.html" class="btn" id="quizBtn">
+        👉 Entrar no Ghost Quiz
+      </a>
+
+      <p id="destino" style="display:none; margin-top:15px; color:#ff4444; font-style:italic;">
+        O seu destino foi traçado…
       </p>
     </div>
 
     <div class="card">
-      <h3>🎬 Lista Inicial</h3>
-      <ul>
-        <li>O Exorcista</li>
-        <li>Hereditário</li>
-        <li>A Bruxa</li>
-        <li>Atividade Paranormal</li>
-        <li>O Iluminado</li>
-      </ul>
+      <h2>🎬 Maratona Fantasma</h2>
       <p>
-        <em>(A lista será expandida em breve…)</em>
+        Uma curadoria sombria de filmes de terror e suspense
+        para atravessar a noite.
       </p>
+
+      <a href="maratona.html" class="btn">
+        Entrar na Maratona Fantasma
+      </a>
     </div>
 
-    <div class="card">
-      <p>
-        ⬅️ <a href="index.html">Voltar para a Dimensão Fantasma</a>
-      </p>
-    </div>
   </main>
 
   <footer>
     © Dimensão Fantasma — Todos os direitos reservados
   </footer>
+
+  <script>
+    const btn = document.getElementById("quizBtn");
+    const destino = document.getElementById("destino");
+
+    if (btn) {
+      btn.addEventListener("click", function (e) {
+        e.preventDefault();
+
+        btn.classList.add("shake");
+        destino.style.display = "block";
+        btn.style.pointerEvents = "none";
+
+        setTimeout(() => {
+          window.location.href = "quiz-inicial.html";
+        }, 1200);
+      });
+    }
+  </script>
 
 </body>
 </html>

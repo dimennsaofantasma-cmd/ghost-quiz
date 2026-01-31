@@ -10,12 +10,8 @@
       color: #e6e6e6;
       font-family: Georgia, serif;
       margin: 0;
-      padding: 30px;
-    }
-
-    header {
+      padding: 20px;
       text-align: center;
-      margin-bottom: 40px;
     }
 
     h1 {
@@ -23,119 +19,67 @@
       margin-bottom: 10px;
     }
 
-    main {
+    .container {
       max-width: 700px;
       margin: 0 auto;
     }
 
     .card {
       background: #151515;
-      border: 1px solid #333;
-      padding: 25px;
-      margin-bottom: 25px;
-      border-radius: 6px;
-    }
-
-    .card.danger {
       border-left: 4px solid darkred;
+      padding: 20px;
+      margin: 30px 0;
+      border-radius: 6px;
+      box-shadow: 0 0 12px rgba(139,0,0,0.4);
     }
 
     .btn {
       display: inline-block;
       margin-top: 15px;
-      padding: 12px 18px;
+      padding: 12px 22px;
       background: darkred;
-      color: white;
+      color: #fff;
       text-decoration: none;
+      border-radius: 5px;
       font-weight: bold;
-      border-radius: 6px;
-      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.15s ease, background 0.2s ease;
     }
 
     .btn:hover {
       background: #a00000;
-    }
-
-    /* Tremida mais visível */
-    @keyframes tremor {
-      0%   { transform: translate(0); }
-      10%  { transform: translate(-4px, 0); }
-      20%  { transform: translate(4px, 0); }
-      30%  { transform: translate(-4px, 0); }
-      40%  { transform: translate(4px, 0); }
-      50%  { transform: translate(-3px, 0); }
-      60%  { transform: translate(3px, 0); }
-      70%  { transform: translate(-2px, 0); }
-      80%  { transform: translate(2px, 0); }
-      90%  { transform: translate(-1px, 0); }
-      100% { transform: translate(0); }
-    }
-
-    .shake {
-      animation: tremor 0.6s ease-in-out;
+      transform: scale(1.05);
     }
 
     footer {
-      text-align: center;
       margin-top: 40px;
-      font-size: 0.9em;
+      font-size: 0.85em;
       color: #777;
     }
   </style>
 </head>
 
 <body>
+  <div class="container">
 
-  <header>
-    <h1>Dimensão Fantasma</h1>
-    <p>Mistérios, enigmas e desafios além da realidade</p>
-  </header>
-
-  <main>
+    <h1>👻 Dimensão Fantasma</h1>
+    <p>Mistérios, enigmas e desafios além da realidade.</p>
 
     <div class="card">
-      <h2>👻 Bem-vindo</h2>
-      <p>
-        Você entrou na Dimensão Fantasma.  
-        Aqui, cada escolha pode revelar um mistério… ou algo pior.
-      </p>
-      <p>Entre por sua conta e risco.</p>
-    </div>
-
-    <div class="card danger">
       <h2>🩸 Ghost Quiz</h2>
       <p>Teste sua coragem e conhecimento em nosso quiz macabro.</p>
-
-      <a href="quiz-inicial.html" class="btn" id="quizBtn">
-        👉 Entrar no Ghost Quiz
-      </a>
-
-      <p id="destino" style="display:none; margin-top:15px; color:#ff4444; font-style:italic;">
-        O seu destino foi traçado…
-      </p>
+      <a class="btn" href="quiz-inicial.html">Entrar no Ghost Quiz</a>
     </div>
 
-  </main>
+    <div class="card">
+      <h2>🔥 Maratona Fantasma</h2>
+      <p>Uma seleção de filmes de terror e suspense para atravessar a noite.</p>
+      <a class="btn" href="maratona.html">Entrar na Maratona</a>
+    </div>
 
-  <footer>
-    © Dimensão Fantasma — Todos os direitos reservados
-  </footer>
+    <footer>
+      © Dimensão Fantasma — Todos os direitos reservados
+    </footer>
 
-  <script>
-    const btn = document.getElementById("quizBtn");
-    const destino = document.getElementById("destino");
-
-    btn.addEventListener("click", function (e) {
-      e.preventDefault();
-
-      destino.style.display = "block";
-      btn.classList.add("shake");
-
-      setTimeout(() => {
-        window.location.href = "quiz-inicial.html";
-      }, 900);
-    });
-  </script>
-
+  </div>
 </body>
 </html>

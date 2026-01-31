@@ -37,104 +37,91 @@
       margin: 0 auto;
     }
 
-    .card {
+    .bloco {
       background: #151515;
-      border-left: 5px solid #550000;
+      border-left: 4px solid darkred;
       padding: 20px;
       margin-bottom: 25px;
       border-radius: 6px;
-      box-shadow: 0 0 12px rgba(120,0,0,0.4);
+      box-shadow: 0 0 10px rgba(139,0,0,0.5);
     }
 
-    .periodo {
-      color: #ff4444;
-      font-size: 1.2em;
-      margin-bottom: 10px;
+    .bloco h3 {
+      margin-top: 0;
+      color: #ff4d4d;
     }
 
-    .filme {
-      margin-bottom: 15px;
-    }
-
-    .filme strong {
-      color: #ffffff;
+    .bloco p {
+      margin: 6px 0;
+      line-height: 1.5;
     }
 
     footer {
       text-align: center;
-      margin-top: 60px;
-      font-size: 0.85em;
+      margin-top: 40px;
+      font-size: 0.9em;
       color: #777;
+    }
+
+    a.voltar {
+      display: inline-block;
+      margin-top: 25px;
+      padding: 12px 18px;
+      background: darkred;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+
+    a.voltar:hover {
+      background: #a00000;
     }
   </style>
 </head>
 
 <body>
 
-<header>
-  <h1>💀 Maratona Fantasma 💀</h1>
-  <h2>Lista diária de filmes de terror e suspense na TV</h2>
-</header>
+  <header>
+    <h1>🩸 Maratona Fantasma</h1>
+    <h2>Uma seleção de filmes de terror e suspense</h2>
+  </header>
 
-<main>
+  <main>
 
-  <div class="card">
-    <div class="periodo">🌙 NOITE</div>
-
-    <div class="filme">
-      <strong>21:00 — Sorria</strong> (Telecine Premium)<br>
-      Maldição / Suspense psicológico
+    <div class="bloco">
+      <h3>🌙 Noite</h3>
+      <p><strong>21:00 – Sorria</strong></p>
+      <p>Maldição persistente e terror psicológico.</p>
     </div>
 
-    <div class="filme">
-      <strong>22:30 — Pânico VI</strong> (Telecine Pipoca)<br>
-      Slasher / Serial Killer
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="periodo">🌑 MADRUGADA</div>
-
-    <div class="filme">
-      <strong>00:15 — O Homem nas Trevas 2</strong> (Megapix)<br>
-      Invasão domiciliar / Suspense
+    <div class="bloco">
+      <h3>🌑 Madrugada</h3>
+      <p><strong>00:15 – O Homem nas Trevas 2</strong></p>
+      <p>Invasão domiciliar, silêncio e tensão extrema.</p>
     </div>
 
-    <div class="filme">
-      <strong>02:40 — A Entidade 2</strong> (AMC)<br>
-      Sobrenatural / Entidade maligna
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="periodo">☀️ MANHÃ</div>
-
-    <div class="filme">
-      <strong>10:25 — O Telefone Preto</strong> (Telecine Action)<br>
-      Sobrenatural / Sequestro
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="periodo">⛅ TARDE</div>
-
-    <div class="filme">
-      <strong>13:50 — Medo Profundo: O Segundo Ataque</strong> (Space)<br>
-      Criaturas / Sobrevivência
+    <div class="bloco">
+      <h3>☀️ Manhã</h3>
+      <p><strong>10:25 – O Telefone Preto</strong></p>
+      <p>Sequestro, sobrenatural e medo crescente.</p>
     </div>
 
-    <div class="filme">
-      <strong>15:45 — Resident Evil: Bem-vindo a Raccoon City</strong> (HBO)<br>
-      Apocalipse zumbi / Horror biológico
+    <div class="bloco">
+      <h3>⛅ Tarde</h3>
+      <p><strong>15:45 – Resident Evil: Bem-Vindo a Raccoon City</strong></p>
+      <p>Apocalipse zumbi e horror biológico.</p>
     </div>
-  </div>
 
-</main>
+    <div style="text-align:center;">
+      <a href="index.html" class="voltar">⬅ Voltar para a Dimensão Fantasma</a>
+    </div>
 
-<footer>
-  ⚠️ Programação sujeita a alterações sem aviso prévio pelas emissoras.<br>
-  © Dimensão Fantasma
-</footer>
+  </main>
+
+  <footer>
+    © Dimensão Fantasma — Todos os direitos reservados
+  </footer>
 
 </body>
 </html>

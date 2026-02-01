@@ -7,92 +7,79 @@
 
   <style>
     body {
-      background: #0b0b0b;
-      color: #e6e6e6;
-      font-family: Georgia, serif;
       margin: 0;
-      padding: 20px;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #200000, #000000 70%);
+      color: #f2f2f2;
+      font-family: Arial, Helvetica, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
     }
 
-    header {
-      text-align: center;
-      margin-bottom: 40px;
+    .container {
+      max-width: 420px;
+      padding: 20px;
     }
 
     h1 {
-      font-size: 2.6em;
+      color: #b30000;
+      font-size: 2.5rem;
       margin-bottom: 10px;
+      text-shadow: 0 0 10px #000;
     }
 
-    main {
-      max-width: 720px;
-      margin: 0 auto;
-    }
-
-    .card {
-      background: #151515;
-      border-left: 4px solid darkred;
-      padding: 20px;
-      margin-bottom: 25px;
-      border-radius: 6px;
-      box-shadow: 0 0 12px rgba(139,0,0,0.4);
-      text-align: center;
-    }
-
-    .card h2 {
-      margin-top: 0;
+    h2 {
+      color: #ff6666;
+      font-size: 1.1rem;
+      font-weight: normal;
+      margin-bottom: 30px;
     }
 
     .btn {
-      display: inline-block;
-      margin-top: 15px;
-      padding: 12px 18px;
-      background: darkred;
-      color: white;
+      display: block;
+      width: 100%;
+      padding: 15px;
+      margin: 12px 0;
+      background: linear-gradient(180deg, #7a0000, #3a0000);
+      color: #fff;
       text-decoration: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
       font-weight: bold;
-      border-radius: 6px;
+      box-shadow: 0 0 15px #000;
     }
 
     .btn:hover {
-      background: #a00000;
+      background: linear-gradient(180deg, #a00000, #500000);
     }
 
-    footer {
-      text-align: center;
-      margin-top: 40px;
-      font-size: 0.9em;
-      color: #777;
+    .em-breve {
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: #999;
+      font-style: italic;
     }
   </style>
 </head>
 
 <body>
+  <div class="container">
+    <h1>Dimensão Fantasma</h1>
+    <h2>Maratona de filmes de terror e suspense</h2>
 
-  <header>
-    <h1>👻 Dimensão Fantasma</h1>
-    <p>Mistérios, enigmas e desafios além da realidade.</p>
-  </header>
+    <a href="/ghost-quiz/" class="btn">
+      Entrar no Ghost Quiz
+    </a>
 
-  <main>
+    <a href="maratona.html" class="btn">
+      Entrar na Maratona Fantasma
+    </a>
 
-    <div class="card">
-      <h2>🩸 Ghost Quiz</h2>
-      <p>Teste sua coragem e conhecimento em nosso quiz macabro.</p>
-      <a href="quiz-inicial.html" class="btn">Entrar no Ghost Quiz</a>
+    <div class="em-breve">
+      Ghost Quiz completo em breve…
     </div>
-
-    <div class="card">
-      <h2>🔥 Maratona Fantasma</h2>
-      <p>Uma curadoria sombria de filmes de terror e suspense.</p>
-      <a href="maratona.html" class="btn">Entrar na Maratona</a>
-    </div>
-
-  </main>
-
-  <footer>
-    © Dimensão Fantasma — Todos os direitos reservados
-  </footer>
-
+  </div>
 </body>
 </html>

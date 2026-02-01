@@ -11,7 +11,11 @@
       font-family: Georgia, serif;
       margin: 0;
       padding: 20px;
+    }
+
+    header {
       text-align: center;
+      margin-bottom: 40px;
     }
 
     h1 {
@@ -19,7 +23,7 @@
       margin-bottom: 10px;
     }
 
-    .container {
+    main {
       max-width: 700px;
       margin: 0 auto;
     }
@@ -28,58 +32,69 @@
       background: #151515;
       border-left: 4px solid darkred;
       padding: 20px;
-      margin: 30px 0;
+      margin-bottom: 25px;
       border-radius: 6px;
-      box-shadow: 0 0 12px rgba(139,0,0,0.4);
+      box-shadow: 0 0 10px rgba(139,0,0,0.4);
+      text-align: center;
     }
 
     .btn {
       display: inline-block;
       margin-top: 15px;
-      padding: 12px 22px;
+      padding: 12px 18px;
       background: darkred;
-      color: #fff;
+      color: white;
       text-decoration: none;
-      border-radius: 5px;
       font-weight: bold;
-      transition: transform 0.15s ease, background 0.2s ease;
+      border-radius: 6px;
     }
 
     .btn:hover {
       background: #a00000;
-      transform: scale(1.05);
     }
 
     footer {
+      text-align: center;
       margin-top: 40px;
-      font-size: 0.85em;
+      font-size: 0.9em;
       color: #777;
     }
   </style>
 </head>
 
 <body>
-  <div class="container">
 
-    <h1>👻 Dimensão Fantasma</h1>
-    <p>Mistérios, enigmas e desafios além da realidade.</p>
+<header>
+  <h1>👻 Dimensão Fantasma</h1>
+  <p>Mistérios, enigmas e desafios além da realidade</p>
+</header>
 
-    <div class="card">
-      <h2>🩸 Ghost Quiz</h2>
-      <p>Teste sua coragem e conhecimento em nosso quiz macabro.</p>
-      <a class="btn" href="quiz-inicial.html">Entrar no Ghost Quiz</a>
-    </div>
+<main>
 
-    <div class="card">
-      <h2>🔥 Maratona Fantasma</h2>
-      <p>Uma seleção de filmes de terror e suspense para atravessar a noite.</p>
-      <a class="btn" href="maratona.html">Entrar na Maratona</a>
-    </div>
-
-    <footer>
-      © Dimensão Fantasma — Todos os direitos reservados
-    </footer>
-
+  <div class="card">
+    <h2>🩸 Ghost Quiz</h2>
+    <p>Teste sua coragem e conhecimento em nosso quiz macabro.</p>
+    <a href="quiz-inicial.html" class="btn">
+      Entrar no Ghost Quiz
+    </a>
   </div>
+
+  <div class="card">
+    <h2>🔥 Maratona Fantasma</h2>
+    <p>
+      Curadoria de filmes de terror e suspense.
+      A programação da noite começa aqui.
+    </p>
+    <a href="maratona.html" class="btn">
+      Entrar na Maratona
+    </a>
+  </div>
+
+</main>
+
+<footer>
+  © Dimensão Fantasma — Todos os direitos reservados
+</footer>
+
 </body>
 </html>
